@@ -67,10 +67,14 @@ const signup = async (req, res) => {
   }
 };
 
+// Account Page Function
+const accountPage = (req, res) => res.render('account');
+
 // Exports
 module.exports = {
   loginPage,
   logout,
   login,
   signup,
+  accountPage,
 };
