@@ -67,10 +67,15 @@ const deleteDomo = async (req, res) => {
   }
 };
 
+const saveSong = (req, res) => {
+  console.log(req.file);
+};  
+
 // Exports
 module.exports = {
   makerPage,
   makeDomo,
   getDomos,
   deleteDomo,
+  saveSong,
 };

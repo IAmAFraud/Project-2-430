@@ -3,11 +3,19 @@ const helper = require('./helper.js');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const handleDomo = (e) => {
+const handleDomo = async (e) => {
     // Prevent Default and Hide Error Message
     e.preventDefault();
     helper.hideError();
 
+    const response = await fetch('/maker', {
+        method: 'POST',
+        body: new FormData(e.target),
+    });
+
+    return false;
+
+    /*
     // Gets the Parameters
     const name = e.target.querySelector('#domoName').value;
     const age = e.target.querySelector('#domoAge').value;
@@ -22,11 +30,13 @@ const handleDomo = (e) => {
     // Sends the Post
     helper.sendPost(e.target.action, {name, age, job}, loadDomosFromServer);
     return false;
+    */
 };
 
 // Domo Form Component
 const DomoForm = (props) => {
     return(
+        /*
         <form id='domoForm'
             onSubmit={handleDomo}
             name='domoForm'
@@ -42,7 +52,21 @@ const DomoForm = (props) => {
             <input id='domoJob' type='text' name='job' placeholder='Domo Job' />
             <input className='makeDomoSubmit' type='submit' value='Make Domo' />
         </form>
+        */
+
+        <form id='uploadForm'
+            onSubmit={handleDomo}
+            name='uploadForm'
+            action='/maker'
+            method='POST'
+            className='uploadForm'
+            encType='multipart/form-data'
+        >
+            <input type='file' name='songFile' />
+            <input type='submit' value='Upload Song!' />
+        </form>
     );
+    
 };
 
 // Domo List Component
@@ -72,7 +96,7 @@ const DomoList = (props) => {
                         },
                         body: JSON.stringify({id: domo._id}),
                     });
-                    loadDomosFromServer();
+                    //loadDomosFromServer();
                 }}>Delete</button>
             </div>
         );
@@ -107,7 +131,7 @@ const init = () => {
         document.getElementById('domos')
     );
 
-    loadDomosFromServer();
+    //loadDomosFromServer();
 };
 
 window.onload = init;

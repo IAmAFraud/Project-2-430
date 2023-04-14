@@ -1,5 +1,7 @@
 // Requires
 const controllers = require('./controllers');
+const multer = require('multer')
+const upload = multer();
 const mid = require('./middleware');
 
 // Create the Router Function
@@ -15,10 +17,10 @@ const router = (app) => {
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 
   // Maker Routes
-  app.get('/maker', mid.requiresLogin, controllers.Domo.makerPage);
+  app.get('/maker', mid.requiresLogin, controllers.Song.homePage);
+  app.post('/maker', mid.requiresLogin, upload.single('songFile'), controllers.Song.saveSong);
 
   app.get('/account', mid.requiresLogin, controllers.Account.accountPage);
-  //app.post('/maker', mid.requiresLogin, controllers.Domo.makeDomo);
 
   // Get Domos
   //app.get('/getDomos', mid.requiresLogin, controllers.Domo.getDomos);
