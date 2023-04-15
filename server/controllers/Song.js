@@ -4,7 +4,10 @@ const models = require('../models');
 const { Song } = models;
 
 // Renders the Homepage
-const homePage = async (req, res) => res.render('app');
+const homePage = async (req, res) => res.render('homepage');
+
+// Renders an account page
+const accountPage = async (req, res) => res.render('account');
 
 
 const saveSong = async (req, res) => {
@@ -45,5 +48,6 @@ const saveSong = async (req, res) => {
   // Exports
   module.exports = {
     homePage,
+    accountPage,
     saveSong,
   };
