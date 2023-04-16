@@ -9,6 +9,18 @@ const homePage = async (req, res) => res.render('homepage');
 // Renders an account page
 const accountPage = async (req, res) => res.render('account');
 
+// Get random song(s)
+const getRandomSong = async (req, res) => {
+    try {
+        const docs = await Song.aggregate([{$sample: {size: 1}}]);
+        
+        return res.json({songs: docs});
+    }catch (err) {
+        console.log(err);
+        return res.status(500).json({error: 'Error Finding Songs'});
+    }
+};
+
 
 const saveSong = async (req, res) => {
     // Checks if a file was provided
@@ -53,8 +65,6 @@ const saveSong = async (req, res) => {
     }
   };
 
-
-
   // Load Song Function
   const retrieveSong = async (req, res) => {  
     if (!req.query._id){
@@ -88,6 +98,7 @@ const saveSong = async (req, res) => {
   module.exports = {
     homePage,
     accountPage,
+    getRandomSong,
     saveSong,
     retrieveUser,
     retrieveSong,

@@ -8,6 +8,7 @@ const mid = require('./middleware');
 const router = (app) => {
   // Homepage Routes
   app.get('/home', controllers.Song.homePage);
+  app.get('/getRandomSongs', controllers.Song.getRandomSong);
 
   // Login/Signup/Password Change Routes
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);

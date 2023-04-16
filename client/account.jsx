@@ -113,6 +113,7 @@ const SongList = (props) => {
 const loadSongsFromServer = async () => {
     const response = await fetch('/retrieveUser');
     const data = await response.json();
+    console.log(data);
     ReactDOM.render(
         <SongList songs={data.songs} />, document.getElementById('userContent')
     );
