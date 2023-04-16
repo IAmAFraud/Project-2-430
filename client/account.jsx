@@ -3,12 +3,12 @@ const helper = require('./helper.js');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const handleDomo = async (e) => {
+const handleSong = async (e) => {
     // Prevent Default and Hide Error Message
     e.preventDefault();
     helper.hideError();
 
-    const response = await fetch('/maker', {
+    const response = await fetch('/songUp', {
         method: 'POST',
         body: new FormData(e.target),
     });
@@ -34,7 +34,7 @@ const handleDomo = async (e) => {
 };
 
 // Domo Form Component
-const DomoForm = (props) => {
+const SongForm = (props) => {
     return(
         /*
         <form id='domoForm'
@@ -55,9 +55,9 @@ const DomoForm = (props) => {
         */
 
         <form id='uploadForm'
-            onSubmit={handleDomo}
+            onSubmit={handleSong}
             name='uploadForm'
-            action='/maker'
+            action='/songUp'
             method='POST'
             className='uploadForm'
             encType='multipart/form-data'
@@ -69,25 +69,23 @@ const DomoForm = (props) => {
     
 };
 
-// Domo List Component
-const DomoList = (props) => {
-    // If there are no Domos
-    if(props.domos.length === 0){
+// Song List Component
+const SongList = (props) => {
+    // If there are no Songs
+    if(props.songs.length === 0){
         return (
-            <div className='domoList'>
-                <h3 className='emptyDomo'>No Domos Yet!</h3>
+            <div className='songList'>
+                <h3 className='emptySong'>No Songs Yet!</h3>
             </div>
         );
     }
 
-    // Maps the Domos to a Div
-    const domoNodes = props.domos.map(domo => {
+    // Maps the Songs to a Div
+    const songNodes = props.songs.map(song => {
         return(
-            <div key={domo._id} className='domo'>
-                <img src='/assets/img/domoface.jpeg' alt='domo face' className='domoFace' />
-                <h3 className='domoName'>Name: {domo.name}</h3>
-                <h3 className='domoAge'>Age: {domo.age}</h3>
-                <h3 className='domoJob'>Job: {domo.job}</h3>
+            <div key={song._id} className='song'>
+                <h3 className='SongName'>Name: {domo.name}</h3>
+                <audio controls src={'/retrieve?_id=' + song._id} />
                 <button className='delete' type='button' onClick={async () => {
                     const response = await fetch('/deleteDomo', {
                         method: 'POST',
@@ -101,37 +99,38 @@ const DomoList = (props) => {
             </div>
         );
     });
+    
 
     // Calls the Above Function
     return(
-        <div className='domoList'>
-            {domoNodes}
+        <div className='songList'>
+            {songNodes}
         </div>
     );
 };
 
 // Loads Domos From a Server and Renders a DomoList component
-const loadDomosFromServer = async () => {
-    const response = await fetch('/getDomos');
+const loadSongsFromServer = async () => {
+    const response = await fetch('/retrieveUser');
     const data = await response.json();
     ReactDOM.render(
-        <DomoList domos={data.domos} />, document.getElementById('domos')
+        <SongList songs={data.songs} />, document.getElementById('userContent')
     );
 };
 
 // Init
 const init = () => {
     ReactDOM.render(
-        <DomoForm />,
-        document.getElementById('makeDomo')
+        <SongForm />,
+        document.getElementById('userData')
     );
 
     ReactDOM.render(
-        <DomoList domos={[]} />,
-        document.getElementById('domos')
+        <SongList songs={[]} />,
+        document.getElementById('userContent')
     );
 
-    //loadDomosFromServer();
+    loadSongsFromServer();
 };
 
 window.onload = init;

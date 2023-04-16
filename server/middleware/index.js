@@ -10,7 +10,7 @@ const requiresLogin = (req, res, next) => {
 // Checks if user is logged out, returns to /maker if not
 const requiresLogout = (req, res, next) => {
   if (req.session.account) {
-    return res.redirect('/maker');
+    return res.redirect('/home');
   }
 
   return next();

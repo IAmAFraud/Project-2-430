@@ -17,6 +17,11 @@ const router = (app) => {
 
   // Account Page Routes
   app.get('/account', controllers.Song.accountPage);
+  app.get('/retrieveUser', controllers.Song.retrieveUser);
+  app.get('/retrieve', controllers.Song.retrieveSong);
+
+  app.post('/songUp', mid.requiresLogin, upload.single('songFile'), controllers.Song.saveSong);
+
 
 
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
