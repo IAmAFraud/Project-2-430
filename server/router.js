@@ -1,6 +1,7 @@
 // Requires
+const multer = require('multer');
 const controllers = require('./controllers');
-const multer = require('multer')
+
 const upload = multer();
 const mid = require('./middleware');
 
@@ -18,12 +19,10 @@ const router = (app) => {
 
   // Account Page Routes
   app.get('/account', controllers.Song.accountPage);
-  app.get('/retrieveUser', controllers.Song.retrieveUser);
+  app.get('/retrieveUser', controllers.Song.retrieveUserSongs);
   app.get('/retrieve', controllers.Song.retrieveSong);
 
   app.post('/songUp', mid.requiresLogin, upload.single('songFile'), controllers.Song.saveSong);
-
-
 
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 
@@ -46,9 +45,9 @@ const router = (app) => {
   */
 
   // Get Domos
-  //app.get('/getDomos', mid.requiresLogin, controllers.Domo.getDomos);
+  // app.get('/getDomos', mid.requiresLogin, controllers.Domo.getDomos);
 
-  //app.post('/deleteDomo', mid.requiresLogin, controllers.Domo.deleteDomo);
+  // app.post('/deleteDomo', mid.requiresLogin, controllers.Domo.deleteDomo);
 
   // Default Route
   app.get('/', controllers.Song.homePage);

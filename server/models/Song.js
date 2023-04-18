@@ -14,33 +14,32 @@ const setString = (value) => _.escape(value).trim();
 
 // Defines the Song Schema
 const SongSchema = new mongoose.Schema({
-   name: {
-      type: String,
-      //required: true,
-      trim: true,
-      set: setString,
-   },
-   filename: {
-      type: String,
-      required: true,
-   },
-   data: {
-      type: Buffer,
-      required: true,
-   },
-   size: {
-      type: Number,
-      required: true,
-   },
-   owner: {
-      type: mongoose.Schema.ObjectId,
-      required: true,
-      ref: 'Account',
-   },
-   createdDate: {
-      type: Date,
-      default: Date.now,
-   }
+  name: {
+    type: String,
+    // required: true,
+    trim: true,
+    set: setString,
+  },
+  filename: {
+    type: String,
+    required: true,
+  },
+  data: {
+    type: Buffer,
+    required: true,
+  },
+  size: {
+    type: Number,
+    required: true,
+  },
+  owner: {
+    type: String,
+    required: true,
+  },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // Create the Model and export it

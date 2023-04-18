@@ -30,7 +30,8 @@ const SongList = (props) => {
     const songNodes = props.songs.map(song => {
         return(
             <div key={song._id} className='song'>
-                <audio src={'/retrieve?_id=' + song._id} />
+                <h3><a href={'/account?user=' + song.owner}>Artist: {song.owner}</a></h3>
+                <audio controls src={'/retrieve?_id=' + song._id} />
             </div>
         );
     });
@@ -48,10 +49,9 @@ const SongList = (props) => {
 const randomSong = async () => {
     const response = await fetch('/getRandomSongs');
     const docs = await response.json();
-    console.log(docs.songs[0]._id);
-    ReactDOM.render(<SongList songs={[docs]} />, document.getElementById('songs'));
-}
-
+    console.log(docs);
+    ReactDOM.render(<SongList songs={docs.songs} />, document.getElementById('songs'));
+};
 
 const init = () => {
     ReactDOM.render(

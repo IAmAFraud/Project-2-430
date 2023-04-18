@@ -33,27 +33,9 @@ const handleSong = async (e) => {
     */
 };
 
-// Domo Form Component
+// Song Upload Component
 const SongForm = (props) => {
     return(
-        /*
-        <form id='domoForm'
-            onSubmit={handleDomo}
-            name='domoForm'
-            action='/maker'
-            method='POST'
-            className='domoForm'
-        >
-            <label htmlFor='name'>Name: </label>
-            <input id='domoName' type='text' name='name' placeholder='Domo Name' />
-            <label htmlFor='age'>Age: </label>
-            <input id='domoAge' type='number' min='0' name='age' />
-            <label htmlFor='job'>Job: </label>
-            <input id='domoJob' type='text' name='job' placeholder='Domo Job' />
-            <input className='makeDomoSubmit' type='submit' value='Make Domo' />
-        </form>
-        */
-
         <form id='uploadForm'
             onSubmit={handleSong}
             name='uploadForm'
@@ -80,22 +62,26 @@ const SongList = (props) => {
         );
     }
 
+    console.log(props.owner)
+
     // Maps the Songs to a Div
     const songNodes = props.songs.map(song => {
         return(
             <div key={song._id} className='song'>
-                <h3 className='SongName'>Name: {domo.name}</h3>
+                <h3 className='SongName'>Name: {song.filename}</h3>
                 <audio controls src={'/retrieve?_id=' + song._id} />
-                <button className='delete' type='button' onClick={async () => {
-                    const response = await fetch('/deleteDomo', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({id: domo._id}),
-                    });
-                    //loadDomosFromServer();
-                }}>Delete</button>
+                {props.owner &&
+                    <button hidden={props.owner} className='delete' type='button' onClick={async () => {
+                        const response = await fetch('/deleteDomo', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({id: domo._id}),
+                        });
+                        loadSongsFromServer();
+                    }}>Delete</button>
+                }
             </div>
         );
     });
@@ -111,11 +97,18 @@ const SongList = (props) => {
 
 // Loads Domos From a Server and Renders a DomoList component
 const loadSongsFromServer = async () => {
-    const response = await fetch('/retrieveUser');
+    const response = await fetch(`/retrieveUser${window.location.search}`);
     const data = await response.json();
-    console.log(data);
+    if (data.redirect){
+        return window.location.href = data.redirect;
+    }
+
+    if (data.error){
+        return helper.handleError(data.error);
+    }
+
     ReactDOM.render(
-        <SongList songs={data.songs} />, document.getElementById('userContent')
+        <SongList songs={data.songs} owner={data.owner} />, document.getElementById('userContent')
     );
 };
 
