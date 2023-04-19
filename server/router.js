@@ -17,6 +17,8 @@ const router = (app) => {
 
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
 
+  app.get('/changePass', mid.requiresSecure, mid.requiresLogin, controllers.Account.loginPage);
+
   // Account Page Routes
   app.get('/account', controllers.Song.accountPage);
   app.get('/retrieveUser', controllers.Song.retrieveUserSongs);
@@ -25,6 +27,12 @@ const router = (app) => {
   app.post('/songUp', mid.requiresLogin, upload.single('songFile'), controllers.Song.saveSong);
 
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
+
+  // Account Verification Route
+  app.get('/checkLogin', controllers.Account.checkLogin);
+
+  // Default Route
+  app.get('/', controllers.Song.homePage);
 
   /*
   // Login Routes
@@ -48,9 +56,6 @@ const router = (app) => {
   // app.get('/getDomos', mid.requiresLogin, controllers.Domo.getDomos);
 
   // app.post('/deleteDomo', mid.requiresLogin, controllers.Domo.deleteDomo);
-
-  // Default Route
-  app.get('/', controllers.Song.homePage);
 };
 
 // exports

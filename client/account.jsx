@@ -1,5 +1,6 @@
 // Imports
 const helper = require('./helper.js');
+const generic = require('./genericElements.jsx');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
@@ -125,6 +126,14 @@ const init = () => {
     );
 
     loadSongsFromServer();
+
+    result = generic.checkLogin();
+
+    // Renders the Component to the screen
+    ReactDOM.render(
+        <generic.AccountDropdown loggedIn={result.loggedIn} username={result.username} />,
+        document.getElementById('header')
+    );
 };
 
 window.onload = init;

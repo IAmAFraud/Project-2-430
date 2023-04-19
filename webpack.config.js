@@ -4,7 +4,8 @@ module.exports = {
     entry: {
         account: './client/account.jsx',
         login: './client/login.jsx',
-        homepage: './client/homepage.jsx'
+        homepage: './client/homepage.jsx',
+        generic: './client/genericElements.jsx'
     },
     module: {
         rules: [

@@ -67,10 +67,28 @@ const signup = async (req, res) => {
   }
 };
 
+// Checks if the user is loggedin
+const checkLogin = (req, res) => {
+  let responseJson;
+  if (req.session.account){
+    responseJson = {
+      loggedIn: true,
+      username: req.session.account.username,
+    }
+  } else {
+    responseJson = {
+      loggedIn: false,
+    }
+  }
+
+  return res.json(responseJson);
+};
+
 // Exports
 module.exports = {
   loginPage,
   logout,
   login,
   signup,
+  checkLogin,
 };

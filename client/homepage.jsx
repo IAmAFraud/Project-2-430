@@ -1,5 +1,6 @@
 // Imports
 const helper = require('./helper.js');
+const generic = require('./genericElements.jsx');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
@@ -53,13 +54,21 @@ const randomSong = async () => {
     ReactDOM.render(<SongList songs={docs.songs} />, document.getElementById('songs'));
 };
 
-const init = () => {
+const init = async () => {
     ReactDOM.render(
         <SongList songs={[]} />,
         document.getElementById('songs')
     );
 
     randomSong();
+
+    result = await generic.checkLogin();
+
+    // Renders the Component to the screen
+    ReactDOM.render(
+        <generic.AccountDropdown loggedIn={result.loggedIn} username={result.username} />,
+        document.getElementById('header')
+    );
 }
 
 

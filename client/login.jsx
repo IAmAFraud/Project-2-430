@@ -1,5 +1,6 @@
 // Imports
 const helper = require('./helper.js');
+const generic = require('./genericElements.jsx');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
@@ -96,25 +97,53 @@ const SignupWindow = (props) => {
 
 // Init
 const init = () => {
+    // Checks if the user is logged in
+    result = generic.checkLogin();
+
+    // Renders the Component to the screen
+    ReactDOM.render(
+        <generic.AccountDropdown loggedIn={result.loggedIn} username={result.username} />,
+        document.getElementById('header')
+    );
+
     // Gets Buttons
     const loginButton = document.getElementById('loginButton');
     const signupButton = document.getElementById('signupButton');
+    const changePassButton = document.getElementById('changePassButton');
 
-    // Login Button Event
-    loginButton.addEventListener('click', (e) => {
-        e.preventDefault();
+    if(result.loggedIn){
+        // Hides Unused Buttons
+        loginButton.classList.add('hidden');
+        signupButton.classList.add('hidden');
+
+        // Login Button Event
+        changePassButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            ReactDOM.render(<LoginWindow />, document.getElementById('content'));
+            return false;
+        });
+
         ReactDOM.render(<LoginWindow />, document.getElementById('content'));
-        return false;
-    });
+    } else {
+        // Hides unused Buttons
+        changePassButton.classList.add('hidden');
 
-    // Signup Button Event
-    signupButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        ReactDOM.render(<SignupWindow />, document.getElementById('content'));
-        return false;
-    });
+        // Login Button Event
+        loginButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            ReactDOM.render(<LoginWindow />, document.getElementById('content'));
+            return false;
+        });
 
-    ReactDOM.render(<LoginWindow />, document.getElementById('content'));
+        // Signup Button Event
+        signupButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            ReactDOM.render(<SignupWindow />, document.getElementById('content'));
+            return false;
+        });
+
+        ReactDOM.render(<LoginWindow />, document.getElementById('content'));
+    }
 };
 
 
