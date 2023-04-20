@@ -114,7 +114,7 @@ const loadSongsFromServer = async () => {
 };
 
 // Init
-const init = () => {
+const init = async () => {
     ReactDOM.render(
         <SongForm />,
         document.getElementById('userData')
@@ -127,7 +127,7 @@ const init = () => {
 
     loadSongsFromServer();
 
-    result = generic.checkLogin();
+    result = await generic.checkLogin();
 
     // Renders the Component to the screen
     ReactDOM.render(

@@ -67,6 +67,38 @@ const signup = async (req, res) => {
   }
 };
 
+// Changes the user's password
+const changePassword = (req, res) => {
+  // Define the variables
+  const oldPass = req.body.oldPass;
+  const newPass = req.body.newPass;
+  const username = req.body.username;
+
+  if (!oldPass || !newPass){
+    return res.status(400).json({error: 'Missing Old or New Password'});
+  }
+
+  // Attempts to Authenticate the User
+  return Account.authenticate(username, oldPass, async (err, account) => {
+    if (err || !account) {
+      return res.status(401).json({ error: 'Wrong password!' });
+    }
+
+    // Tries to Create a New User
+    try {
+      const hash = await Account.generateHash(newPass);
+      account.password = hash;
+      await account.save();
+      req.session.account = Account.toAPI(account);
+      return res.json({ redirect: '/home' });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'An Error Occurred' });
+    }
+
+  });
+};
+
 // Checks if the user is loggedin
 const checkLogin = (req, res) => {
   let responseJson;
@@ -90,5 +122,6 @@ module.exports = {
   logout,
   login,
   signup,
+  changePassword,
   checkLogin,
 };

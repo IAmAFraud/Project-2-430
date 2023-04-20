@@ -54,6 +54,29 @@ const handleSignup = (e) => {
     return false;
 };
 
+// Handle Changing a user's password
+// Handles a player logging in
+const handleChangePassword = (e, username) => {
+    // Prevents Default and Resets the Error Message
+    e.preventDefault();
+    helper.hideError();
+
+    // Gets Parameters
+    const oldPass = e.target.querySelector('#oldPass').value;
+    const newPass = e.target.querySelector('#newPass').value;
+
+    // If Missing Parameter
+    if (!oldPass || !newPass || !username) {
+        helper.handleError('Old or New Password is Empty!');
+        return false;
+    }
+
+    // Sends the login
+    helper.sendPost(e.target.action, {oldPass, newPass, username});
+
+    return false;
+};
+
 
 // Login Component
 const LoginWindow = (props) => {
@@ -95,10 +118,34 @@ const SignupWindow = (props) => {
     );
 };
 
+// Change Password Component
+const ChangePassWindow = (props) => {
+    const handlePassChange = (e) => {
+        const username = props.username;
+        handleChangePassword(e, username);
+    }
+    
+    return (
+        <form id='changePassForm'
+            name='changePassForm'
+            onSubmit={handlePassChange}
+            action='/changePass'
+            method='POST'
+            className='mainForm'
+        >
+            <label htmlFor='oldPass'>Old Password: </label>
+            <input id='oldPass' type='password' name='oldPass' placeholder='old password' />
+            <label htmlFor='newPass'>New Password: </label>
+            <input id='newPass' type='password' name='newPass' placeholder='new password' />
+            <input className='formSubmit' type='submit' value='Sign Up' />
+        </form>
+    );
+}
+
 // Init
-const init = () => {
+const init = async () => {
     // Checks if the user is logged in
-    result = generic.checkLogin();
+    result = await generic.checkLogin();
 
     // Renders the Component to the screen
     ReactDOM.render(
@@ -109,24 +156,16 @@ const init = () => {
     // Gets Buttons
     const loginButton = document.getElementById('loginButton');
     const signupButton = document.getElementById('signupButton');
-    const changePassButton = document.getElementById('changePassButton');
 
     if(result.loggedIn){
         // Hides Unused Buttons
         loginButton.classList.add('hidden');
         signupButton.classList.add('hidden');
 
-        // Login Button Event
-        changePassButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            ReactDOM.render(<LoginWindow />, document.getElementById('content'));
-            return false;
-        });
-
-        ReactDOM.render(<LoginWindow />, document.getElementById('content'));
+        ReactDOM.render(<ChangePassWindow username={result.username} />, document.getElementById('content'));
     } else {
-        // Hides unused Buttons
-        changePassButton.classList.add('hidden');
+        console.log(loginButton);
+        console.log(signupButton);
 
         // Login Button Event
         loginButton.addEventListener('click', (e) => {

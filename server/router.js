@@ -18,6 +18,7 @@ const router = (app) => {
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
 
   app.get('/changePass', mid.requiresSecure, mid.requiresLogin, controllers.Account.loginPage);
+  app.post('/changePass', mid.requiresSecure, mid.requiresLogin, controllers.Account.changePassword);
 
   // Account Page Routes
   app.get('/account', controllers.Song.accountPage);
