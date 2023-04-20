@@ -3,6 +3,7 @@ const helper = require('./helper.js');
 const generic = require('./genericElements.jsx');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const { result } = require('underscore');
 
 const handleSong = async (e) => {
     // Prevent Default and Hide Error Message
@@ -13,6 +14,8 @@ const handleSong = async (e) => {
         method: 'POST',
         body: new FormData(e.target),
     });
+
+    loadSongsFromServer();
 
     return false;
 
@@ -46,6 +49,8 @@ const SongForm = (props) => {
             encType='multipart/form-data'
         >
             <input type='file' name='songFile' />
+            <label htmlFor='fileName'>Song Name:</label>
+            <input id='fileNameInput' type='text' name='fileName' placeholder='AHHHHHHHHHHHHHHHHHHHH' />
             <input type='submit' value='Upload Song!' />
         </form>
     );
@@ -67,9 +72,11 @@ const SongList = (props) => {
 
     // Maps the Songs to a Div
     const songNodes = props.songs.map(song => {
+        console.log(song);
+
         return(
             <div key={song._id} className='song'>
-                <h3 className='SongName'>Name: {song.filename}</h3>
+                <h3 className='SongName'>Name: {song.name}</h3>
                 <audio controls src={'/retrieve?_id=' + song._id} />
                 {props.owner &&
                     <button hidden={props.owner} className='delete' type='button' onClick={async () => {
@@ -115,10 +122,14 @@ const loadSongsFromServer = async () => {
 
 // Init
 const init = async () => {
-    ReactDOM.render(
-        <SongForm />,
-        document.getElementById('userData')
-    );
+    const result = await generic.checkLogin();
+
+    if (result.loggedIn){
+        ReactDOM.render(
+            <SongForm />,
+            document.getElementById('userData')
+        );
+    }
 
     ReactDOM.render(
         <SongList songs={[]} />,
@@ -126,8 +137,6 @@ const init = async () => {
     );
 
     loadSongsFromServer();
-
-    result = await generic.checkLogin();
 
     // Renders the Component to the screen
     ReactDOM.render(

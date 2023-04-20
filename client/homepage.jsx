@@ -4,15 +4,22 @@ const generic = require('./genericElements.jsx');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-// Account Navigation Component
+const searchCallback = (e) => {
+    e.preventDefault();
+    helper.hideError();
 
+    const search = e.target.querySelector('#searchQuery').value;
+    const type = e.target.querySelector('#searchSelect').value
+    
+    // If missing value, prevent search
+    if (!search || !type) {
+        helper.handleError('Missing Search Parameter');
+    }
 
-
-
-
-
-
-
+    //helper.sendPost(e.target.action, {search, type});
+    
+    console.log(type);
+}
 
 // Song List Component
 const SongList = (props) => {
@@ -32,6 +39,7 @@ const SongList = (props) => {
         return(
             <div key={song._id} className='song'>
                 <h3><a href={'/account?user=' + song.owner}>Artist: {song.owner}</a></h3>
+                <h3>Song Name: {song.name}</h3>
                 <audio controls src={'/retrieve?_id=' + song._id} />
             </div>
         );
@@ -55,6 +63,11 @@ const randomSong = async () => {
 };
 
 const init = async () => {
+    ReactDOM.render(
+        <generic.SearchBar callback={searchCallback} />,
+        document.getElementById('search')
+    );
+    
     ReactDOM.render(
         <SongList songs={[]} />,
         document.getElementById('songs')

@@ -23,8 +23,8 @@ const getRandomSong = async (req, res) => {
 
 const saveSong = async (req, res) => {
   // Checks if a file was provided
-  if (!req.file) {
-    return res.status(400).json({ error: 'Missing File' });
+  if (!req.file || !req.body.fileName) {
+    return res.status(400).json({ error: 'Missing File or Filename' });
   }
 
   // Checks if the file is an MP3
@@ -34,6 +34,7 @@ const saveSong = async (req, res) => {
 
   // Creates a data file from the Multer Upload
   const songData = {
+    name: req.body.fileName,
     filename: req.file.originalname,
     data: req.file.buffer,
     size: req.file.size,
@@ -70,7 +71,7 @@ const retrieveUserSongs = async (req, res) => {
 
   try {
     const query = { owner: user };
-    const docs = await Song.find(query).select('_id').exec();
+    const docs = await Song.find(query).select('_id name').exec();
 
     return res.json({ songs: docs, owner });
   } catch (err) {
@@ -102,11 +103,30 @@ const retrieveSong = async (req, res) => {
   res.set({
     'Content-Type': 'audio/mpeg',
     'Content-Length': doc.size,
-    'Content-Disposition': `filename="${doc.name}"`,
+    'Content-Disposition': `filename="${doc.filename}"`,
   });
 
   return res.send(doc.data);
 };
+
+/*
+const search = (req, res) => {
+  // Check if params are present
+  if (req.body.search || req.body.type) {
+    return res.status(400).json({ error: 'Missing Search Parameters' });
+  }
+
+  let docs;
+  const query = {};
+
+  try {
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json('Error Searching Database');
+  }
+};
+*/
 
 // Exports
 module.exports = {

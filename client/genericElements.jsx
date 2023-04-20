@@ -3,6 +3,28 @@ const helper = require('./helper.js');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
+// Search Bar Component
+const SearchBar = (props) => {
+    return(
+        <form id='searchForm'
+            onSubmit={props.callback}
+            name='searchForm'
+            action='/search'
+            method='POST'
+            className='searchForm'
+            encType='multipart/form-data'
+        >
+            <label htmlFor='query'>Search:</label>
+            <input id='searchQuery' type='text' name='query' placeholder='DOES NOT WORK YET' />
+            <select id='searchSelect' name='searchOptions'>
+                <option value='sonog'>Song</option>
+                <option value='user'>User</option>
+            </select>
+            <input type='submit' value='Search' />
+        </form>
+    );
+};
+
 
 // Account Dropdown Component
 const AccountDropdown = (props) => {
@@ -39,5 +61,6 @@ const checkLogin = async () => {
 
 module.exports = {
     checkLogin,
+    SearchBar,
     AccountDropdown,
 }
