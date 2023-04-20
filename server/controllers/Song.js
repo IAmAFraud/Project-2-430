@@ -30,7 +30,7 @@ const saveSong = async (req, res) => {
   // Checks if the file is an MP3
   if (req.file.mimetype !== 'audio/mpeg') {
     return res.status(400).json({ error: 'Invalid File Type' });
-  }  
+  }
 
   // Creates a data file from the Multer Upload
   const songData = {
@@ -52,32 +52,31 @@ const saveSong = async (req, res) => {
 
 // Function to get all the ids of a user's songs
 const retrieveUserSongs = async (req, res) => {
-    let user;
-    if (!req.query.user && req.session.account) {
-        return res.json({redirect: `/account?user=${req.session.account.username}`});
-    } else {
-        user = req.query.user;
-    }
+  let user;
+  if (!req.query.user && req.session.account) {
+    user = '';
+    return res.json({ redirect: `/account?user=${req.session.account.username}` });
+  }
+  user = req.query.user;
 
-    if (!user){
-        return res.status(400).json({error: 'No User Provided'})
-    }
+  if (!user) {
+    return res.status(400).json({ error: 'No User Provided' });
+  }
 
-    let owner = false;
-    if (req.session.account && (req.session.account.username = user)) {
-        owner = true;
-    }
+  let owner = false;
+  if (req.session.account && (req.session.account.username === user)) {
+    owner = true;
+  }
 
+  try {
+    const query = { owner: user };
+    const docs = await Song.find(query).select('_id').exec();
 
-    try {
-        const query = { owner: user };
-        const docs = await Song.find(query).select('_id').exec();
-
-        return res.json({ songs: docs, owner: owner });
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({ error: 'Error When Retrieving Id\'s' });
-    }
+    return res.json({ songs: docs, owner });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Error When Retrieving Id\'s' });
+  }
 };
 
 // Load Song Function

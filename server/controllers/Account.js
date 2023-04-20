@@ -70,12 +70,12 @@ const signup = async (req, res) => {
 // Changes the user's password
 const changePassword = (req, res) => {
   // Define the variables
-  const oldPass = req.body.oldPass;
-  const newPass = req.body.newPass;
-  const username = req.body.username;
+  const { oldPass } = req.body;
+  const { newPass } = req.body;
+  const { username } = req.body;
 
-  if (!oldPass || !newPass){
-    return res.status(400).json({error: 'Missing Old or New Password'});
+  if (!oldPass || !newPass) {
+    return res.status(400).json({ error: 'Missing Old or New Password' });
   }
 
   // Attempts to Authenticate the User
@@ -87,30 +87,30 @@ const changePassword = (req, res) => {
     // Tries to Create a New User
     try {
       const hash = await Account.generateHash(newPass);
-      account.password = hash;
-      await account.save();
+      const tempAccount = account;
+      tempAccount.password = hash;
+      await tempAccount.save();
       req.session.account = Account.toAPI(account);
       return res.json({ redirect: '/home' });
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
       return res.status(500).json({ error: 'An Error Occurred' });
     }
-
   });
 };
 
 // Checks if the user is loggedin
 const checkLogin = (req, res) => {
   let responseJson;
-  if (req.session.account){
+  if (req.session.account) {
     responseJson = {
       loggedIn: true,
       username: req.session.account.username,
-    }
+    };
   } else {
     responseJson = {
       loggedIn: false,
-    }
+    };
   }
 
   return res.json(responseJson);
