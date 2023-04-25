@@ -5,6 +5,50 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const { result } = require('underscore');
 
+// Displays the Search Results on the Webpage
+const displaySearch = (result, type) => {
+    console.log(result);
+
+    if (type === '/searchSong') {
+        ReactDOM.render(
+            <generic.SongList songs={result.searchResult} />,
+            document.getElementById('userContent')
+        );
+    }
+    else {
+        ReactDOM.render(
+            <generic.AccountList users={result.searchResult} />,
+            document.getElementById('userContent')
+        );
+    }
+}
+
+
+const searchCallback = async (e) => {
+    e.preventDefault();
+    helper.hideError();
+
+    const search = e.target.querySelector('#searchQuery').value;
+    const type = e.target.querySelector('#searchSelect').value
+    
+    // If missing value, prevent search
+    if (!search || !type) {
+        helper.handleError('Missing Search Parameter');
+    }
+
+    const url = `${type}?search=${search}`;
+    
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    displaySearch(await response.json(), type);
+}
+
+
 const handleSong = async (e) => {
     // Prevent Default and Hide Error Message
     e.preventDefault();
@@ -122,6 +166,11 @@ const loadSongsFromServer = async () => {
 
 // Init
 const init = async () => {
+    ReactDOM.render(
+        <generic.SearchBar callback={searchCallback} />,
+        document.getElementById('search')
+    );
+
     const result = await generic.checkLogin();
 
     if (result.loggedIn){
