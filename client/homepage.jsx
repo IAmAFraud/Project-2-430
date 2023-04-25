@@ -14,7 +14,10 @@ const displaySearch = (result, type) => {
         );
     }
     else {
-        console.log(result.searchResult);
+        ReactDOM.render(
+            <generic.AccountList users={result.searchResult} />,
+            document.getElementById('songs')
+        );
     }
 }
 

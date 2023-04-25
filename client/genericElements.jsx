@@ -52,6 +52,34 @@ const AccountDropdown = (props) => {
     );
 };
 
+// Account List Component
+const AccountList = (props) => {
+    // If there are no songs found
+    if(props.users.length === 0){
+        return (
+            <div className='userList'>
+                <h3 className='emptyUser'>No Users Found!</h3>
+            </div>
+        );
+    }
+
+    // Maps the song to elements
+    const userNodes = props.users.map(user => {
+        return(
+            <div key={user._id} className='user'>
+                <h3><a href={'/account?user=' + user.username}>User: {user.username}</a></h3>
+            </div>
+        );
+    });
+
+    // Calls songNodes
+    return(
+        <div className='userList'>
+            {userNodes}
+        </div>
+    );
+};
+
 // Function for checking if a user is logged in
 const checkLogin = async () => {
     // Checks if logged in and gets the username
@@ -63,4 +91,5 @@ module.exports = {
     checkLogin,
     SearchBar,
     AccountDropdown,
+    AccountList,
 }
