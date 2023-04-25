@@ -109,24 +109,28 @@ const retrieveSong = async (req, res) => {
   return res.send(doc.data);
 };
 
-/*
-const search = (req, res) => {
+
+const searchSong = async (req, res) => {
   // Check if params are present
-  if (req.body.search || req.body.type) {
-    return res.status(400).json({ error: 'Missing Search Parameters' });
+  if (!req.query.search) {
+    return res.status(400).json({ error: 'Missing Search Parameter' });
   }
 
   let docs;
-  const query = {};
+
+  // Creates the regex param
+  const regexExpression = new RegExp(req.query.search, 'gi');
 
   try {
-
+    const query = {name: {$regex: regexExpression}};
+    docs = await Song.find(query);
+    return res.json({ searchResult: docs});
   } catch (err) {
     console.log(err);
     return res.status(500).json('Error Searching Database');
   }
 };
-*/
+
 
 // Exports
 module.exports = {
@@ -136,4 +140,5 @@ module.exports = {
   saveSong,
   retrieveUserSongs,
   retrieveSong,
+  searchSong,
 };

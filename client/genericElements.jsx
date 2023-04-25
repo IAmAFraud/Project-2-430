@@ -4,7 +4,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 // Search Bar Component
-const SearchBar = (props) => {
+const SearchBar = (props) => {    
     return(
         <form id='searchForm'
             onSubmit={props.callback}
@@ -17,8 +17,8 @@ const SearchBar = (props) => {
             <label htmlFor='query'>Search:</label>
             <input id='searchQuery' type='text' name='query' placeholder='DOES NOT WORK YET' />
             <select id='searchSelect' name='searchOptions'>
-                <option value='sonog'>Song</option>
-                <option value='user'>User</option>
+                <option value='/searchSong'>Song</option>
+                <option value='/searchUser'>User</option>
             </select>
             <input type='submit' value='Search' />
         </form>

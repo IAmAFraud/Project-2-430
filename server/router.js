@@ -32,6 +32,10 @@ const router = (app) => {
   // Account Verification Route
   app.get('/checkLogin', controllers.Account.checkLogin);
 
+  // Search Routes
+  app.get('/searchSong', controllers.Song.searchSong);
+  app.get('/searchUser', controllers.Account.searchAccount);
+
   // Default Route
   app.get('/', controllers.Song.homePage);
 

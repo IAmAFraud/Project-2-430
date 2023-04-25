@@ -116,6 +116,28 @@ const checkLogin = (req, res) => {
   return res.json(responseJson);
 };
 
+
+const searchAccount = async (req, res) => {
+  // Check if params are present
+  if (!req.query.search) {
+    return res.status(400).json({ error: 'Missing Search Parameter' });
+  }
+
+  let docs;
+
+  // Creates the regex param
+  const regexExpression = new RegExp(req.query.search, 'gi');
+
+  try {
+    const query = {username: {$regex: regexExpression}};
+    docs = await Account.find(query);
+    return res.json({ searchResult: docs});
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json('Error Searching Database');
+  }
+};
+
 // Exports
 module.exports = {
   loginPage,
@@ -124,4 +146,5 @@ module.exports = {
   signup,
   changePassword,
   checkLogin,
+  searchAccount,
 };

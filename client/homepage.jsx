@@ -4,7 +4,21 @@ const generic = require('./genericElements.jsx');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const searchCallback = (e) => {
+const displaySearch = (result, type) => {
+    console.log(result);
+
+    if (type === '/searchSong') {
+        ReactDOM.render(
+            <SongList songs={result.searchResult} />,
+            document.getElementById('songs')
+        );
+    }
+    else {
+        console.log(result.searchResult);
+    }
+}
+
+const searchCallback = async (e) => {
     e.preventDefault();
     helper.hideError();
 
@@ -16,9 +30,16 @@ const searchCallback = (e) => {
         helper.handleError('Missing Search Parameter');
     }
 
-    //helper.sendPost(e.target.action, {search, type});
+    const url = `${type}?search=${search}`;
     
-    console.log(type);
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    displaySearch(await response.json(), type);
 }
 
 // Song List Component
