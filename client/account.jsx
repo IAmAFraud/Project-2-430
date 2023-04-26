@@ -104,6 +104,24 @@ const SongForm = (props) => {
 
 // Song List Component
 const SongList = (props) => {
+    // Checks if a song is liked
+    const songLiked = async (id, checkBox) => {
+        const response = await fetch(`/checkLike?id=${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const result = await response.json();
+        if(liked){
+            checkBox.checked = true;
+        }
+    };
+
+    const updateLiked = (e) => {
+        console.log(e.target.checked);
+    }
+    
     // If there are no Songs
     if(props.songs.length === 0){
         return (
@@ -113,16 +131,14 @@ const SongList = (props) => {
         );
     }
 
-    console.log(props.owner)
-
     // Maps the Songs to a Div
     const songNodes = props.songs.map(song => {
-        console.log(song);
-
         return(
             <div key={song._id} className='song'>
                 <h3 className='SongName'>Name: {song.name}</h3>
                 <audio controls src={'/retrieve?_id=' + song._id} />
+                <label for='like'>Like: </label>
+                <input id='liked' type='checkbox' onChange={updateLiked} />
                 {props.owner &&
                     <button hidden={props.owner} className='delete' type='button' onClick={async () => {
                         const response = await fetch('/deleteSong', {
@@ -164,6 +180,8 @@ const loadSongsFromServer = async (user) => {
     ReactDOM.render(
         <SongList songs={data.songs} owner={data.owner} />, document.getElementById('userContent')
     );
+
+
 };
 
 // Init

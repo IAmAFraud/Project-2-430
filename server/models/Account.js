@@ -33,6 +33,9 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  likedSongs: {
+    type: [mongoose.ObjectId],
+  },
   createdDate: {
     type: Date,
     default: Date.now,
