@@ -51,11 +51,28 @@ const saveSong = async (req, res) => {
   }
 };
 
+// Function to delete a song
+const deleteSong = async (req, res) => {
+    if (!req.body.id) {
+        return res.status(400).json({error: 'Missing ID to Delete'});
+    }
+    
+    try {
+        const query = {_id: req.body.id };
+        const doc = await Song.findOneAndDelete(query).select('name').lean().exec();
+        return res.json({ message: `Successfully Deleted ${doc.name}`});
+    }catch (err){
+        console.log(err);
+        return res.status(500).json( {error: "Error With Contacting Database"});
+    }
+};
+
+
 // Function to get all the ids of a user's songs
 const retrieveUserSongs = async (req, res) => {
   let user;
   if (!req.query.user && req.session.account) {
-    user = '';
+    //user = '';
     return res.json({ redirect: `/account?user=${req.session.account.username}` });
   }
   user = req.query.user;
@@ -138,6 +155,7 @@ module.exports = {
   accountPage,
   getRandomSong,
   saveSong,
+  deleteSong,
   retrieveUserSongs,
   retrieveSong,
   searchSong,

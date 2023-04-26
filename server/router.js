@@ -26,6 +26,7 @@ const router = (app) => {
   app.get('/retrieve', controllers.Song.retrieveSong);
 
   app.post('/songUp', mid.requiresLogin, upload.single('songFile'), controllers.Song.saveSong);
+  app.post('/deleteSong', mid.requiresLogin, controllers.Song.deleteSong);
 
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 

@@ -59,7 +59,8 @@ const handleSong = async (e) => {
         body: new FormData(e.target),
     });
 
-    loadSongsFromServer();
+    const pageUser = window.location.search.split('=')[1];
+    loadSongsFromServer(pageUser);
 
     return false;
 
@@ -124,14 +125,15 @@ const SongList = (props) => {
                 <audio controls src={'/retrieve?_id=' + song._id} />
                 {props.owner &&
                     <button hidden={props.owner} className='delete' type='button' onClick={async () => {
-                        const response = await fetch('/deleteDomo', {
+                        const response = await fetch('/deleteSong', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({id: domo._id}),
+                            body: JSON.stringify({id: song._id}),
                         });
-                        loadSongsFromServer();
+                        const pageUser = window.location.search.split('=')[1];
+                        loadSongsFromServer(pageUser);
                     }}>Delete</button>
                 }
             </div>
@@ -148,7 +150,7 @@ const SongList = (props) => {
 };
 
 // Loads Domos From a Server and Renders a DomoList component
-const loadSongsFromServer = async () => {
+const loadSongsFromServer = async (user) => {
     const response = await fetch(`/retrieveUser${window.location.search}`);
     const data = await response.json();
     if (data.redirect){
@@ -172,8 +174,10 @@ const init = async () => {
     );
 
     const result = await generic.checkLogin();
+    const pageUser = window.location.search.split('=')[1];
+    console.log(pageUser);
 
-    if (result.loggedIn){
+    if (result.loggedIn && pageUser === result.username){
         ReactDOM.render(
             <SongForm />,
             document.getElementById('userData')
@@ -185,7 +189,7 @@ const init = async () => {
         document.getElementById('userContent')
     );
 
-    loadSongsFromServer();
+    loadSongsFromServer(pageUser);
 
     // Renders the Component to the screen
     ReactDOM.render(
