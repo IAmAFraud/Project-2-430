@@ -1,4 +1,5 @@
 // Sets up the Models
+const { ObjectId } = require('bson');
 const models = require('../models');
 
 const { Account } = models;
@@ -138,6 +139,56 @@ const searchAccount = async (req, res) => {
   }
 };
 
+// Checks if a user has like a song
+const checkLiked = async (req, res) => {
+  if (!req.query.id){
+      return res.status(400).json({error: 'Missing Song Id'});
+  }
+
+  let doc;
+
+  try {
+      const query = {username: req.session.account.username};
+      doc = await Account.findOne(query);
+      const id = new ObjectId(req.query.id);
+      console.log(id);
+      const song = doc.likedSongs.indexOf(id);
+      return res.json({data: song});
+  } catch (err) {
+      console.log(err);
+      return res.status(500).json({error: 'Error Communicating With Database'});
+  }
+};
+
+// Updates what songs a user has liked
+const updateLiked = async (req, res) => {
+  if (!req.body.id || req.body.checked === null) {
+    console.log(req.body.checked);
+    return res.status(400).json({error: 'Missing Song ID or Checked Status'});
+  }
+
+  let doc;
+  let query = {username: req.session.account.username};
+
+  try {
+    const userAccount = await Account.findOne(query);
+    if (req.body.checked) { 
+      userAccount.likedSongs.push(req.body.id);
+      await userAccount.save();
+      return res.json({message: 'Successfully Added Liked Song'});
+    } else {
+      const id = new ObjectId(req.body.id);
+      const index = userAccount.likedSongs.indexOf(id);
+      userAccount.likedSongs.splice(index, 1);
+      await userAccount.save();
+      return res.json({message: 'Successfully Removed Liked Song'});
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({error: 'Issue Communicating With Server'});
+  }
+};
+
 // Exports
 module.exports = {
   loginPage,
@@ -147,4 +198,6 @@ module.exports = {
   changePassword,
   checkLogin,
   searchAccount,
+  checkLiked,
+  updateLiked,
 };

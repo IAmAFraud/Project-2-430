@@ -1,4 +1,5 @@
 // Requires
+const { Account } = require('.');
 const models = require('../models');
 
 const { Song } = models;
@@ -147,7 +148,6 @@ const searchSong = async (req, res) => {
     return res.status(500).json('Error Searching Database');
   }
 };
-
 
 // Exports
 module.exports = {

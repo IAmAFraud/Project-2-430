@@ -30,6 +30,10 @@ const router = (app) => {
 
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 
+  // Liked Songs Routes
+  app.get('/checkLike', mid.requiresLogin, controllers.Account.checkLiked);
+  app.post('/updateLiked', mid.requiresLogin, controllers.Account.updateLiked);
+
   // Account Verification Route
   app.get('/checkLogin', controllers.Account.checkLogin);
 

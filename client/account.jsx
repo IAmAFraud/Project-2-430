@@ -60,7 +60,8 @@ const handleSong = async (e) => {
     });
 
     const pageUser = window.location.search.split('=')[1];
-    loadSongsFromServer(pageUser);
+    const result = await generic.checkLogin();
+    loadSongsFromServer(pageUser, result.loggedIn);
 
     return false;
 
@@ -105,22 +106,16 @@ const SongForm = (props) => {
 // Song List Component
 const SongList = (props) => {
     // Checks if a song is liked
-    const songLiked = async (id, checkBox) => {
+    const songLiked = async (id) => {
         const response = await fetch(`/checkLike?id=${id}`, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
         const result = await response.json();
-        if(liked){
-            checkBox.checked = true;
-        }
+        return result.data;
     };
-
-    const updateLiked = (e) => {
-        console.log(e.target.checked);
-    }
     
     // If there are no Songs
     if(props.songs.length === 0){
@@ -133,12 +128,26 @@ const SongList = (props) => {
 
     // Maps the Songs to a Div
     const songNodes = props.songs.map(song => {
+        let liked = false;
+        if (props.loggedIn) {
+            liked = songLiked(song._id);
+        }
+        
+
         return(
             <div key={song._id} className='song'>
                 <h3 className='SongName'>Name: {song.name}</h3>
                 <audio controls src={'/retrieve?_id=' + song._id} />
-                <label for='like'>Like: </label>
-                <input id='liked' type='checkbox' onChange={updateLiked} />
+                {props.loggedIn &&
+                    <label for='like'>Like: </label> 
+                }  
+                {props.loggedIn &&
+                    <input id='liked' type='checkbox' onChange={(e) => {
+                        const id = song._id;
+                        const checked = e.target.checked;
+                        helper.sendPost('/updateLiked', {id, checked});
+                    }} /> 
+                }    
                 {props.owner &&
                     <button hidden={props.owner} className='delete' type='button' onClick={async () => {
                         const response = await fetch('/deleteSong', {
@@ -149,7 +158,8 @@ const SongList = (props) => {
                             body: JSON.stringify({id: song._id}),
                         });
                         const pageUser = window.location.search.split('=')[1];
-                        loadSongsFromServer(pageUser);
+                        const result = await generic.checkLogin();
+                        loadSongsFromServer(pageUser, result.loggedIn);
                     }}>Delete</button>
                 }
             </div>
@@ -166,7 +176,7 @@ const SongList = (props) => {
 };
 
 // Loads Domos From a Server and Renders a DomoList component
-const loadSongsFromServer = async (user) => {
+const loadSongsFromServer = async (user, _loggedIn) => {
     const response = await fetch(`/retrieveUser${window.location.search}`);
     const data = await response.json();
     if (data.redirect){
@@ -178,7 +188,7 @@ const loadSongsFromServer = async (user) => {
     }
 
     ReactDOM.render(
-        <SongList songs={data.songs} owner={data.owner} />, document.getElementById('userContent')
+        <SongList songs={data.songs} owner={data.owner} loggedIn={_loggedIn}/>, document.getElementById('userContent')
     );
 
 
@@ -207,7 +217,7 @@ const init = async () => {
         document.getElementById('userContent')
     );
 
-    loadSongsFromServer(pageUser);
+    loadSongsFromServer(pageUser, result.loggedIn);
 
     // Renders the Component to the screen
     ReactDOM.render(
