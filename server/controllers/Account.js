@@ -130,9 +130,9 @@ const searchAccount = async (req, res) => {
   const regexExpression = new RegExp(req.query.search, 'gi');
 
   try {
-    const query = {username: {$regex: regexExpression}};
+    const query = { username: { $regex: regexExpression } };
     docs = await Account.find(query);
-    return res.json({ searchResult: docs});
+    return res.json({ searchResult: docs });
   } catch (err) {
     console.log(err);
     return res.status(500).json('Error Searching Database');
@@ -141,32 +141,32 @@ const searchAccount = async (req, res) => {
 
 // Checks if a user has liked a song
 const checkLiked = async (req, res) => {
-  if (!req.query.id){
-      return res.status(400).json({error: 'Missing Song Id'});
+  if (!req.query.id) {
+    return res.status(400).json({ error: 'Missing Song Id' });
   }
 
   let doc;
 
   try {
     // Looks for the liked song
-      const query = {username: req.session.account.username};
-      doc = await Account.findOne(query);
-      const id = new ObjectId(req.query.id);
-      const song = doc.likedSongs.indexOf(id);
-      
-      // Prepares the response
-      const responseJson = {
-        result: true,
-      };
-      if (song === -1){
-        responseJson.result = false;
-      }
+    const query = { username: req.session.account.username };
+    doc = await Account.findOne(query);
+    const id = new ObjectId(req.query.id);
+    const song = doc.likedSongs.indexOf(id);
 
-      // Returns the result
-      return res.json({responseJson});
+    // Prepares the response
+    const responseJson = {
+      result: true,
+    };
+    if (song === -1) {
+      responseJson.result = false;
+    }
+
+    // Returns the result
+    return res.json({ responseJson });
   } catch (err) {
-      console.log(err);
-      return res.status(500).json({error: 'Error Communicating With Database'});
+    console.log(err);
+    return res.status(500).json({ error: 'Error Communicating With Database' });
   }
 };
 
@@ -174,41 +174,40 @@ const checkLiked = async (req, res) => {
 const updateLiked = async (req, res) => {
   if (!req.body.id || req.body.checked === null) {
     console.log(req.body.checked);
-    return res.status(400).json({error: 'Missing Song ID or Checked Status'});
+    return res.status(400).json({ error: 'Missing Song ID or Checked Status' });
   }
 
-  let query = {username: req.session.account.username};
+  const query = { username: req.session.account.username };
 
   try {
     const userAccount = await Account.findOne(query);
-    if (req.body.checked) { 
+    if (req.body.checked) {
       userAccount.likedSongs.push(req.body.id);
       await userAccount.save();
-      return res.json({message: 'Successfully Added Liked Song'});
-    } else {
-      const id = new ObjectId(req.body.id);
-      const index = userAccount.likedSongs.indexOf(id);
-      userAccount.likedSongs.splice(index, 1);
-      await userAccount.save();
-      return res.json({message: 'Successfully Removed Liked Song'});
+      return res.json({ message: 'Successfully Added Liked Song' });
     }
+    const id = new ObjectId(req.body.id);
+    const index = userAccount.likedSongs.indexOf(id);
+    userAccount.likedSongs.splice(index, 1);
+    await userAccount.save();
+    return res.json({ message: 'Successfully Removed Liked Song' });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({error: 'Issue Communicating With Server'});
+    return res.status(500).json({ error: 'Issue Communicating With Server' });
   }
 };
 
 // Returns all of the songs liked by a user
 const getLikedSongs = async (req, res) => {
-  const query = {username: req.session.account.username};
+  const query = { username: req.session.account.username };
   let doc;
 
   try {
     doc = await Account.findOne(query).select('likedSongs').exec();
-    return res.json({ids: doc});
+    return res.json({ ids: doc });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({error: 'Problem Communicating With Server'});
+    return res.status(500).json({ error: 'Problem Communicating With Server' });
   }
 };
 

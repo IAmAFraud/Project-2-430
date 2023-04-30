@@ -1,7 +1,5 @@
 // Requires
-const { Account } = require('.');
 const models = require('../models');
-const mongoose = require('mongoose');
 
 const { Song } = models;
 
@@ -55,29 +53,26 @@ const saveSong = async (req, res) => {
 
 // Function to delete a song
 const deleteSong = async (req, res) => {
-    if (!req.body.id) {
-        return res.status(400).json({error: 'Missing ID to Delete'});
-    }
-    
-    try {
-        const query = {_id: req.body.id };
-        const doc = await Song.findOneAndDelete(query).select('name').lean().exec();
-        return res.json({ message: `Successfully Deleted ${doc.name}`});
-    }catch (err){
-        console.log(err);
-        return res.status(500).json( {error: "Error With Contacting Database"});
-    }
-};
+  if (!req.body.id) {
+    return res.status(400).json({ error: 'Missing ID to Delete' });
+  }
 
+  try {
+    const query = { _id: req.body.id };
+    const doc = await Song.findOneAndDelete(query).select('name').lean().exec();
+    return res.json({ message: `Successfully Deleted ${doc.name}` });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Error With Contacting Database' });
+  }
+};
 
 // Function to get all the ids of a user's songs
 const retrieveUserSongs = async (req, res) => {
-  let user;
   if (!req.query.user && req.session.account) {
-    //user = '';
     return res.json({ redirect: `/account?user=${req.session.account.username}` });
   }
-  user = req.query.user;
+  const { user } = req.query;
 
   if (!user) {
     return res.status(400).json({ error: 'No User Provided' });
@@ -130,28 +125,27 @@ const retrieveSong = async (req, res) => {
 
 // Gets the name of a song based on an id
 const getSongName = async (req, res) => {
-    if (!req.query.id){
-        return res.status(400).json({error: 'Missing Id!'})
+  if (!req.query.id) {
+    return res.status(400).json({ error: 'Missing Id!' });
+  }
+
+  const query = { _id: req.query.id };
+  let doc;
+
+  try {
+    doc = await Song.findOne(query).select('name').lean().exec();
+    let songName;
+    if (!doc) {
+      songName = false;
+    } else {
+      songName = doc.name;
     }
-
-    const query = {_id: req.query.id};
-    let doc;
-
-    try {
-        doc = await Song.findOne(query).select('name').lean().exec();
-        let songName;
-        if (!doc){
-            songName = false;
-        } else {
-            songName = doc.name
-        }
-        return res.json({songName: songName});
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({error: 'Problem Communicating With The Server'});
-    }
-}
-
+    return res.json({ songName });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ error: 'Problem Communicating With The Server' });
+  }
+};
 
 const searchSong = async (req, res) => {
   // Check if params are present
@@ -165,9 +159,9 @@ const searchSong = async (req, res) => {
   const regexExpression = new RegExp(req.query.search, 'gi');
 
   try {
-    const query = {name: {$regex: regexExpression}};
+    const query = { name: { $regex: regexExpression } };
     docs = await Song.find(query);
-    return res.json({ searchResult: docs});
+    return res.json({ searchResult: docs });
   } catch (err) {
     console.log(err);
     return res.status(500).json('Error Searching Database');
