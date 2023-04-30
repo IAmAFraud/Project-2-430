@@ -1,6 +1,7 @@
 // Requires
 const { Account } = require('.');
 const models = require('../models');
+const mongoose = require('mongoose');
 
 const { Song } = models;
 
@@ -127,6 +128,24 @@ const retrieveSong = async (req, res) => {
   return res.send(doc.data);
 };
 
+// Gets the name of a song based on an id
+const getSongName = async (req, res) => {
+    if (!req.query.id){
+        return res.status(400).json({error: 'Missing Id!'})
+    }
+
+    const query = {_id: req.query.id};
+    let doc;
+
+    try {
+        doc = await Song.findOne(query).select('name').lean().exec();
+        return res.json({songName: doc.name});
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({error: 'Problem Communicating With The Server'});
+    }
+}
+
 
 const searchSong = async (req, res) => {
   // Check if params are present
@@ -158,5 +177,6 @@ module.exports = {
   deleteSong,
   retrieveUserSongs,
   retrieveSong,
+  getSongName,
   searchSong,
 };

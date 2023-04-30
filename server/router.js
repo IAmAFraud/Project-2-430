@@ -32,6 +32,8 @@ const router = (app) => {
 
   // Liked Songs Routes
   app.get('/checkLike', mid.requiresLogin, controllers.Account.checkLiked);
+  app.get('/likedSongs', mid.requiresLogin, controllers.Account.getLikedSongs);
+  app.get('/getSongName', controllers.Song.getSongName);
   app.post('/updateLiked', mid.requiresLogin, controllers.Account.updateLiked);
 
   // Account Verification Route

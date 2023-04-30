@@ -117,7 +117,7 @@ const checkLogin = (req, res) => {
   return res.json(responseJson);
 };
 
-
+// Performs a search for accounts that have the search param in their name
 const searchAccount = async (req, res) => {
   // Check if params are present
   if (!req.query.search) {
@@ -198,6 +198,20 @@ const updateLiked = async (req, res) => {
   }
 };
 
+// Returns all of the songs liked by a user
+const getLikedSongs = async (req, res) => {
+  const query = {username: req.session.account.username};
+  let doc;
+
+  try {
+    doc = await Account.findOne(query).select('likedSongs').exec();
+    return res.json({ids: doc});
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({error: 'Problem Communicating With Server'});
+  }
+};
+
 // Exports
 module.exports = {
   loginPage,
@@ -209,4 +223,5 @@ module.exports = {
   searchAccount,
   checkLiked,
   updateLiked,
+  getLikedSongs,
 };

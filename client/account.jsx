@@ -128,7 +128,7 @@ const SongList = (props) => {
                         helper.sendPost('/updateLiked', {id, checked});
                     }} /> 
                 }
-                {props.owner &&
+                {props.owner !== 'false' &&
                     <button hidden={props.owner} className='delete' type='button' onClick={async () => {
                         const response = await fetch('/deleteSong', {
                             method: 'POST',
@@ -175,14 +175,71 @@ const loadSongsFromServer = async (user, _loggedIn) => {
     if(_loggedIn) generic.updateLikedCheckbox();
 };
 
+// Loads the songs to the page from the page
+const loadAccountSongs = async (e) => {
+    e.preventDefault();
+    helper.hideError();
+
+    // Loads the user's songs to the page
+    const result = await generic.checkLogin();
+    const pageUser = window.location.search.split('=')[1];
+
+    loadSongsFromServer(pageUser, result.loggedIn);
+};
+
+// Loads in the users liked songs
+const loadLikedSongs = async (e) => {
+    e.preventDefault();
+    helper.hideError();
+
+    const response = await fetch('/likedSongs', {
+        method: 'GET',
+        headers: {
+            'content-type': 'application/json',
+        }
+    });
+    const resJson = await response.json();
+
+    const songInfo = [];
+    for (let i = 0; i < resJson.ids.likedSongs.length; i++) {
+        const nameResponse = await fetch(`/getSongName?id=${resJson.ids.likedSongs[i]}`, {
+            method: 'GET',
+            headers: {
+                'content-type': 'application/json',
+            }
+        });
+        const nameResJson = await nameResponse.json();
+
+        songInfo.push({_id: resJson.ids.likedSongs[i], name: nameResJson.songName});
+    }
+
+    ReactDOM.render(
+        <SongList songs={songInfo} owner='false' loggedIn='true' />, document.getElementById('userContent')
+    );
+}
+
 // Init
 const init = async () => {
+    // Checks if the user is logged in
+    const result = await generic.checkLogin();
+
+    // Adds Functions to the Nav Buttons
+    const mySongsBtn = document.getElementById('accountSongsButton');
+    const likedSongsBtn = document.getElementById('likedSongsButton');
+
+    mySongsBtn.addEventListener('click', loadAccountSongs);
+    if (!result.loggedIn) {
+        likedSongsBtn.classList.add('hidden');
+    }
+    likedSongsBtn.addEventListener('click', loadLikedSongs);
+    
+    // Renders the Search Bar
     ReactDOM.render(
         <generic.SearchBar callback={searchCallback} />,
         document.getElementById('search')
     );
 
-    const result = await generic.checkLogin();
+    // Tests if the user is logged in and logged into their own account
     const pageUser = window.location.search.split('=')[1];
 
     if (result.loggedIn && pageUser === result.username){
@@ -192,6 +249,7 @@ const init = async () => {
         );
     }
 
+    // Loads in the user's songs
     ReactDOM.render(
         <SongList songs={[]} />,
         document.getElementById('userContent')
