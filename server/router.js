@@ -36,6 +36,10 @@ const router = (app) => {
   app.get('/getSongName', controllers.Song.getSongName);
   app.post('/updateLiked', mid.requiresLogin, controllers.Account.updateLiked);
 
+  // Premium Subscription Routes
+  app.get('/checkPremium', mid.requiresLogin, controllers.Account.checkPremium);
+  app.post('/updatePremium', mid.requiresLogin, mid.requiresSecure, controllers.Account.updatePremium);
+
   // Account Verification Route
   app.get('/checkLogin', controllers.Account.checkLogin);
 

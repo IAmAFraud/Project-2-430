@@ -28,6 +28,15 @@ const SearchBar = (props) => {
 
 // Account Dropdown Component
 const AccountDropdown = (props) => {
+    // Callback for when premium subscription checkbox is checked
+    const updatePremium = (e) =>{
+        helper.hideError();
+
+        const checked = e.target.checked;
+
+        helper.sendPost('/updatePremium', {subscribed: checked});
+    };
+
     // Creates the List Elements depending if logged in or not
     let actions;
     if (props.loggedIn){
@@ -36,6 +45,13 @@ const AccountDropdown = (props) => {
                 <li><a href={'/account?user=' + props.username} id='accountAction'>Account</a></li>
                 <li><a href='/changePass' id='changePassAction'>Change Password</a></li>
                 <li><a href='/logout' id='logoutAction'>Logout</a></li>
+                <li>
+                    <label for='premium'>Premium Subscription: </label>
+                    {props.subscribed ?
+                        <input id='premiumSub' type='checkbox' onChange={updatePremium} checked/> :
+                        <input id='premiumSub' type='checkbox' onChange={updatePremium}/>
+                    }
+                </li>
             </ul>;
     } else {
         actions =

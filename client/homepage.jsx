@@ -58,8 +58,8 @@ const randomSong = async () => {
     // Gets the random songs and renders them to the page
     const response = await fetch('/getRandomSongs');
     const docs = await response.json();
-    const loggedIn = await generic.checkLogin();
-    ReactDOM.render(<generic.SongList songs={docs.songs} loggedIn={loggedIn.loggedIn}/>, document.getElementById('songs'));
+    const loginResult = await generic.checkLogin();
+    ReactDOM.render(<generic.SongList songs={docs.songs} loggedIn={loginResult.loggedIn}/>, document.getElementById('songs'));
 
     // Updates the checkboxes
     generic.updateLikedCheckbox();
@@ -78,11 +78,23 @@ const init = async () => {
 
     randomSong();
 
-    result = await generic.checkLogin();
-
     // Renders the Component to the screen
+    const loginResult = await generic.checkLogin();
+    let isSubscribed = false;
+    if (loginResult.loggedIn){
+        const response = await fetch('/checkPremium', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const result = await response.json();
+        isSubscribed = result.subscribed;
+    }
+    
+
     ReactDOM.render(
-        <generic.AccountDropdown loggedIn={result.loggedIn} username={result.username} />,
+        <generic.AccountDropdown loggedIn={loginResult.loggedIn} username={loginResult.username} subscribed={isSubscribed}/>,
         document.getElementById('header')
     );
 }

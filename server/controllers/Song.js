@@ -1,7 +1,7 @@
 // Requires
 const models = require('../models');
 
-const { Song } = models;
+const { Song, Account } = models;
 
 // Renders the Homepage
 const homePage = async (req, res) => res.render('homepage');
@@ -32,6 +32,19 @@ const saveSong = async (req, res) => {
     return res.status(400).json({ error: 'Invalid File Type' });
   }
 
+  // Checks if the user has the space to upload
+  const query = {username: req.session.account.username};
+  let doc;
+  try {
+    doc = await Account.findOne(query).select('premiumSubscription numOwnedSongs');
+    if (!doc.premiumSubscription && doc.numOwnedSongs >= 5) {
+        return res.status(400).json({error: 'Max Number of Uploads Met.'})
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({error: 'Problem Communicating With Database'});
+  }
+
   // Creates a data file from the Multer Upload
   const songData = {
     name: req.body.fileName,
@@ -43,7 +56,9 @@ const saveSong = async (req, res) => {
 
   try {
     const newSong = new Song(songData);
-    newSong.save();
+    await newSong.save();
+    doc.numOwnedSongs++;
+    await doc.save();
     return res.status(201).json({ filename: newSong.filename });
   } catch (err) {
     console.log(err);

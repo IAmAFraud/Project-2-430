@@ -52,10 +52,16 @@ const handleSong = async (e) => {
     e.preventDefault();
     helper.hideError();
 
-    const response = await fetch('/songUp', {
+    const uploadResponse = await fetch('/songUp', {
         method: 'POST',
         body: new FormData(e.target),
-    });
+    }); 
+
+    const uploadResult = await uploadResponse.json();
+    
+    if (uploadResult.error) {
+        helper.handleError(uploadResult.error);
+    }
 
     const pageUser = window.location.search.split('=')[1];
     const result = await generic.checkLogin();
@@ -232,7 +238,7 @@ const loadLikedSongs = async (e) => {
 // Init
 const init = async () => {
     // Checks if the user is logged in
-    const result = await generic.checkLogin();
+    const loginResult = await generic.checkLogin();
     const account = window.location.search.split('=')[1];
 
     // Adds Functions to the Nav Buttons
@@ -240,7 +246,7 @@ const init = async () => {
     const likedSongsBtn = document.getElementById('likedSongsButton');
 
     mySongsBtn.addEventListener('click', loadAccountSongs);
-    if (!result.loggedIn || account !== result.username) {
+    if (!loginResult.loggedIn || account !== loginResult.username) {
         likedSongsBtn.classList.add('hidden');
     }
     likedSongsBtn.addEventListener('click', loadLikedSongs);
@@ -254,7 +260,7 @@ const init = async () => {
     // Tests if the user is logged in and logged into their own account
     const pageUser = window.location.search.split('=')[1];
 
-    if (result.loggedIn && pageUser === result.username){
+    if (loginResult.loggedIn && pageUser === loginResult.username){
         ReactDOM.render(
             <SongForm />,
             document.getElementById('userData')
@@ -267,11 +273,24 @@ const init = async () => {
         document.getElementById('userContent')
     );
 
-    loadSongsFromServer(pageUser, result.loggedIn);
+    loadSongsFromServer(pageUser, loginResult.loggedIn);
 
-    // Renders the Component to the screen
+    let isSubscribed = false;
+    if (loginResult.loggedIn) {
+        // Renders the Component to the screen
+        const response = await fetch('/checkPremium', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const result = await response.json();
+        isSubscribed = result.subscribed;
+    }
+    
+
     ReactDOM.render(
-        <generic.AccountDropdown loggedIn={result.loggedIn} username={result.username} />,
+        <generic.AccountDropdown loggedIn={loginResult.loggedIn} username={loginResult.username} subscribed={isSubscribed}/>,
         document.getElementById('header')
     );
 };

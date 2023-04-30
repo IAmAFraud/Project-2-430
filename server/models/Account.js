@@ -35,6 +35,15 @@ const AccountSchema = new mongoose.Schema({
   },
   likedSongs: {
     type: [mongoose.ObjectId],
+    required: true,
+  },
+  premiumSubscription: {
+    type: Boolean,
+    required: true,
+  },
+  numOwnedSongs: {
+    type: Number,
+    require: true,
   },
   createdDate: {
     type: Date,

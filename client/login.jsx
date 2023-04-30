@@ -145,11 +145,25 @@ const ChangePassWindow = (props) => {
 // Init
 const init = async () => {
     // Checks if the user is logged in
-    result = await generic.checkLogin();
+    const loginResult = await generic.checkLogin();
+    let isSubscribed = false;
 
-    // Renders the Component to the screen
+    if (loginResult.loggedIn) {
+        // Renders the Component to the screen
+        const response = await fetch('/checkPremium', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const result = await response.json();
+        isSubscribed = result.subscribed;
+    }
+
+    
+
     ReactDOM.render(
-        <generic.AccountDropdown loggedIn={result.loggedIn} username={result.username} />,
+        <generic.AccountDropdown loggedIn={loginResult.loggedIn} username={loginResult.username} subscribed={isSubscribed} />,
         document.getElementById('header')
     );
 
@@ -157,12 +171,12 @@ const init = async () => {
     const loginButton = document.getElementById('loginButton');
     const signupButton = document.getElementById('signupButton');
 
-    if(result.loggedIn){
+    if(loginResult.loggedIn){
         // Hides Unused Buttons
         loginButton.classList.add('hidden');
         signupButton.classList.add('hidden');
 
-        ReactDOM.render(<ChangePassWindow username={result.username} />, document.getElementById('content'));
+        ReactDOM.render(<ChangePassWindow username={loginResult.username} />, document.getElementById('content'));
     } else {
         console.log(loginButton);
         console.log(signupButton);
