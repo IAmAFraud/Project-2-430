@@ -222,13 +222,14 @@ const loadLikedSongs = async (e) => {
 const init = async () => {
     // Checks if the user is logged in
     const result = await generic.checkLogin();
+    const account = window.location.search.split('=')[1];
 
     // Adds Functions to the Nav Buttons
     const mySongsBtn = document.getElementById('accountSongsButton');
     const likedSongsBtn = document.getElementById('likedSongsButton');
 
     mySongsBtn.addEventListener('click', loadAccountSongs);
-    if (!result.loggedIn) {
+    if (!result.loggedIn || account !== result.username) {
         likedSongsBtn.classList.add('hidden');
     }
     likedSongsBtn.addEventListener('click', loadLikedSongs);
