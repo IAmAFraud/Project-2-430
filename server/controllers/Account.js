@@ -153,7 +153,6 @@ const checkLiked = async (req, res) => {
       doc = await Account.findOne(query);
       const id = new ObjectId(req.query.id);
       const song = doc.likedSongs.indexOf(id);
-      console.log(song);
       
       // Prepares the response
       const responseJson = {

@@ -7,8 +7,6 @@ const { result } = require('underscore');
 
 // Displays the Search Results on the Webpage
 const displaySearch = (result, type) => {
-    console.log(result);
-
     if (type === '/searchSong') {
         ReactDOM.render(
             <generic.SongList songs={result.searchResult} />,
@@ -103,19 +101,6 @@ const SongForm = (props) => {
     
 };
 
-// Checks if a song is liked
-const songLiked = async (id) => {
-    const response = await fetch(`/checkLike?id=${id}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-    const result = await response.json();
-    console.log(result);
-    return result.responseJson.result;
-};
-
 // Song List Component
 const SongList = (props) => {    
     // If there are no Songs
@@ -186,17 +171,8 @@ const loadSongsFromServer = async (user, _loggedIn) => {
         <SongList songs={data.songs} owner={data.owner} loggedIn={_loggedIn}/>, document.getElementById('userContent')
     );
 
-    const likedCheckboxes = document.getElementsByClassName('liked');
-    console.log(likedCheckboxes[0]);
-    if (likedCheckboxes){
-        for (let i = 0; i < likedCheckboxes.length; i++){
-            const result = await songLiked(likedCheckboxes[i].id)
-            if (result){
-                console.log('Check ' + i);
-                likedCheckboxes[i].checked = true;
-            }
-        }
-    }
+    // Updates the checkboxes
+    if(_loggedIn) generic.updateLikedCheckbox();
 };
 
 // Init
@@ -208,7 +184,6 @@ const init = async () => {
 
     const result = await generic.checkLogin();
     const pageUser = window.location.search.split('=')[1];
-    console.log(pageUser);
 
     if (result.loggedIn && pageUser === result.username){
         ReactDOM.render(

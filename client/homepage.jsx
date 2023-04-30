@@ -4,14 +4,16 @@ const generic = require('./genericElements.jsx');
 const React = require('react');
 const ReactDOM = require('react-dom');
 
+// Displays the result of the search to the page
 const displaySearch = (result, type) => {
-    console.log(result);
-
     if (type === '/searchSong') {
+        const loggedIn = generic.checkLogin();
         ReactDOM.render(
-            <generic.SongList songs={result.searchResult} />,
+            <generic.SongList songs={result.searchResult} loggedIn={loggedIn.loggedIn} />,
             document.getElementById('songs')
         );
+
+        generic.updateLikedCheckbox();
     }
     else {
         ReactDOM.render(
@@ -28,8 +30,13 @@ const searchCallback = async (e) => {
     const search = e.target.querySelector('#searchQuery').value;
     const type = e.target.querySelector('#searchSelect').value
     
-    // If missing value, prevent search
-    if (!search || !type) {
+    // If missing search, just return random songs
+    if (!search) {
+        return randomSong();
+    }
+
+    // If missing type, prevent search
+    if (!type) {
         helper.handleError('Missing Search Parameter');
     }
 
@@ -48,10 +55,14 @@ const searchCallback = async (e) => {
 
 // Gets a random song
 const randomSong = async () => {
+    // Gets the random songs and renders them to the page
     const response = await fetch('/getRandomSongs');
     const docs = await response.json();
-    console.log(docs);
-    ReactDOM.render(<generic.SongList songs={docs.songs} />, document.getElementById('songs'));
+    const loggedIn = await generic.checkLogin();
+    ReactDOM.render(<generic.SongList songs={docs.songs} loggedIn={loggedIn.loggedIn}/>, document.getElementById('songs'));
+
+    // Updates the checkboxes
+    generic.updateLikedCheckbox();
 };
 
 const init = async () => {
@@ -61,7 +72,7 @@ const init = async () => {
     );
     
     ReactDOM.render(
-        <generic.SongList songs={[]} />,
+        <generic.SongList songs={[]} loggedIn='false' />,
         document.getElementById('songs')
     );
 

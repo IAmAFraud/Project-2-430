@@ -15,7 +15,7 @@ const SearchBar = (props) => {
             encType='multipart/form-data'
         >
             <label htmlFor='query'>Search:</label>
-            <input id='searchQuery' type='text' name='query' placeholder='DOES NOT WORK YET' />
+            <input id='searchQuery' type='text' name='query' placeholder='SEARCH HERE' />
             <select id='searchSelect' name='searchOptions'>
                 <option value='/searchSong'>Song</option>
                 <option value='/searchUser'>User</option>
@@ -54,8 +54,6 @@ const AccountDropdown = (props) => {
 
 // Song List Component
 const SongList = (props) => {
-    console.log(props.songs);
-
     // If there are no songs found
     if(props.songs.length === 0){
         return (
@@ -72,6 +70,16 @@ const SongList = (props) => {
                 <h3><a href={'/account?user=' + song.owner}>Artist: {song.owner}</a></h3>
                 <h3>Song Name: {song.name}</h3>
                 <audio controls src={'/retrieve?_id=' + song._id} />
+                {props.loggedIn &&
+                    <label for='like'>Like: </label> 
+                }
+                {props.loggedIn &&
+                    <input id={song._id} class='liked' type='checkbox' onChange={(e) => {
+                        const id = song._id;
+                        const checked = e.target.checked;
+                        helper.sendPost('/updateLiked', {id, checked});
+                    }} /> 
+                }
             </div>
         );
     });
@@ -119,10 +127,37 @@ const checkLogin = async () => {
     return result = await response.json();
 }
 
+// Checks if a song is liked
+const songLiked = async (id) => {
+    const response = await fetch(`/checkLike?id=${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    const result = await response.json();
+    return result.responseJson.result;
+};
+
+// Updates a liked checkbox
+const updateLikedCheckbox = async () =>{
+    const likedCheckboxes = document.getElementsByClassName('liked');
+    if (likedCheckboxes){
+        for (let i = 0; i < likedCheckboxes.length; i++){
+            const result = await songLiked(likedCheckboxes[i].id)
+            if (result){
+                likedCheckboxes[i].checked = true;
+            }
+        }
+    }
+}
+
 module.exports = {
     checkLogin,
     SearchBar,
     AccountDropdown,
     SongList,
     AccountList,
+    songLiked,
+    updateLikedCheckbox,
 }
