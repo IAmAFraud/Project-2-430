@@ -148,12 +148,23 @@ const checkLiked = async (req, res) => {
   let doc;
 
   try {
+    // Looks for the liked song
       const query = {username: req.session.account.username};
       doc = await Account.findOne(query);
       const id = new ObjectId(req.query.id);
-      console.log(id);
       const song = doc.likedSongs.indexOf(id);
-      return res.json({data: song});
+      console.log(song);
+      
+      // Prepares the response
+      const responseJson = {
+        result: true,
+      };
+      if (song === -1){
+        responseJson.result = false;
+      }
+
+      // Returns the result
+      return res.json({responseJson});
   } catch (err) {
       console.log(err);
       return res.status(500).json({error: 'Error Communicating With Database'});
@@ -167,7 +178,6 @@ const updateLiked = async (req, res) => {
     return res.status(400).json({error: 'Missing Song ID or Checked Status'});
   }
 
-  let doc;
   let query = {username: req.session.account.username};
 
   try {
