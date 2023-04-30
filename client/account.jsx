@@ -116,8 +116,15 @@ const SongList = (props) => {
     const songNodes = props.songs.map(song => {
         return(
             <div key={song._id} className='song'>
-                <h3 className='SongName'>Name: {song.name}</h3>
-                <audio controls src={'/retrieve?_id=' + song._id} />
+                {!song.name ? 
+                    <h3 className='SongName'>Song Has Been Deleted</h3> : 
+                    <h3 className='SongName'>Name: {song.name}</h3>
+                }
+                {!song.name ?
+                    <audio controls src='' /> :
+                    <audio controls src={'/retrieve?_id=' + song._id} />
+                }
+                
                 {props.loggedIn &&
                     <label for='like'>Like: </label> 
                 }
@@ -130,6 +137,7 @@ const SongList = (props) => {
                 }
                 {props.owner !== 'false' &&
                     <button hidden={props.owner} className='delete' type='button' onClick={async () => {
+                        // Deletes the song from the database
                         const response = await fetch('/deleteSong', {
                             method: 'POST',
                             headers: {
@@ -137,6 +145,7 @@ const SongList = (props) => {
                             },
                             body: JSON.stringify({id: song._id}),
                         });
+
                         const pageUser = window.location.search.split('=')[1];
                         const result = await generic.checkLogin();
                         loadSongsFromServer(pageUser, result.loggedIn);
@@ -172,7 +181,7 @@ const loadSongsFromServer = async (user, _loggedIn) => {
     );
 
     // Updates the checkboxes
-    if(_loggedIn) generic.updateLikedCheckbox();
+    generic.updateLikedCheckbox();
 };
 
 // Loads the songs to the page from the page
@@ -216,6 +225,8 @@ const loadLikedSongs = async (e) => {
     ReactDOM.render(
         <SongList songs={songInfo} owner='false' loggedIn='true' />, document.getElementById('userContent')
     );
+
+    generic.updateLikedCheckbox();
 }
 
 // Init

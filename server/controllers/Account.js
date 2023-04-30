@@ -139,7 +139,7 @@ const searchAccount = async (req, res) => {
   }
 };
 
-// Checks if a user has like a song
+// Checks if a user has liked a song
 const checkLiked = async (req, res) => {
   if (!req.query.id){
       return res.status(400).json({error: 'Missing Song Id'});

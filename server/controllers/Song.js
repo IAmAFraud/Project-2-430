@@ -139,7 +139,13 @@ const getSongName = async (req, res) => {
 
     try {
         doc = await Song.findOne(query).select('name').lean().exec();
-        return res.json({songName: doc.name});
+        let songName;
+        if (!doc){
+            songName = false;
+        } else {
+            songName = doc.name
+        }
+        return res.json({songName: songName});
     } catch (err) {
         console.log(err);
         return res.status(500).json({error: 'Problem Communicating With The Server'});
