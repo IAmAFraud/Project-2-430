@@ -12,7 +12,7 @@ const accountPage = async (req, res) => res.render('account');
 // Get random song(s)
 const getRandomSong = async (req, res) => {
   try {
-    const docs = await Song.aggregate([{ $sample: { size: 2 } }]);
+    const docs = await Song.aggregate([{ $sample: { size: 5 } }]);
 
     return res.json({ songs: docs });
   } catch (err) {
@@ -33,16 +33,16 @@ const saveSong = async (req, res) => {
   }
 
   // Checks if the user has the space to upload
-  const query = {username: req.session.account.username};
+  const query = { username: req.session.account.username };
   let doc;
   try {
     doc = await Account.findOne(query).select('premiumSubscription numOwnedSongs');
     if (!doc.premiumSubscription && doc.numOwnedSongs >= 5) {
-        return res.status(400).json({error: 'Max Number of Uploads Met.'})
+      return res.status(400).json({ error: 'Max Number of Uploads Met.' });
     }
   } catch (err) {
     console.log(err);
-    return res.status(500).json({error: 'Problem Communicating With Database'});
+    return res.status(500).json({ error: 'Problem Communicating With Database' });
   }
 
   // Creates a data file from the Multer Upload

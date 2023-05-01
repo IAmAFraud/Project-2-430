@@ -55,7 +55,9 @@ const signup = async (req, res) => {
   // Tries to Create a New User
   try {
     const hash = await Account.generateHash(pass);
-    const newAccount = new Account({ username, password: hash, premiumSubscription: false, numOwnedSongs: 0});
+    const newAccount = new Account({
+      username, password: hash, premiumSubscription: false, numOwnedSongs: 0,
+    });
     await newAccount.save();
     req.session.account = Account.toAPI(newAccount);
     return res.json({ redirect: '/home' });
@@ -214,36 +216,36 @@ const getLikedSongs = async (req, res) => {
 // Updates whether an account has a premium subscription
 const updatePremium = async (req, res) => {
   if (req.body.subscribed === null) {
-    return res.status(400).json({error: 'Missing Subscribed Parameter'});
+    return res.status(400).json({ error: 'Missing Subscribed Parameter' });
   }
 
-  const query = {username: req.session.account.username};
+  const query = { username: req.session.account.username };
   let doc;
 
   try {
     doc = await Account.findOne(query);
     doc.premiumSubscription = req.body.subscribed;
     await doc.save();
-    return res.json({subscribed: doc.premiumSubscription});
+    return res.json({ subscribed: doc.premiumSubscription });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({error: 'Problem Communicating With Database'});
+    return res.status(500).json({ error: 'Problem Communicating With Database' });
   }
 };
 
 // Checks if the user has a premium subscription
 const checkPremium = async (req, res) => {
-  const query = {username: req.session.account.username};
+  const query = { username: req.session.account.username };
   let doc;
 
   try {
     doc = await Account.findOne(query).select('premiumSubscription').exec();
-    return res.json({subscribed: doc.premiumSubscription});
-  } catch (err){
+    return res.json({ subscribed: doc.premiumSubscription });
+  } catch (err) {
     console.log(err);
-    return res.status(500).json({error: 'Problem Communicating With Database'});
+    return res.status(500).json({ error: 'Problem Communicating With Database' });
   }
-}
+};
 
 // Exports
 module.exports = {

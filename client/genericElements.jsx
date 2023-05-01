@@ -83,8 +83,8 @@ const SongList = (props) => {
     const songNodes = props.songs.map(song => {
         return(
             <div key={song._id} className='song'>
-                <h3><a href={'/account?user=' + song.owner}>Artist: {song.owner}</a></h3>
-                <h3>Song Name: {song.name}</h3>
+                <h3 className='songName'>Song Name: {song.name}</h3>
+                <h3 className='songOwner'><a href={'/account?user=' + song.owner}>Artist: {song.owner}</a></h3>
                 <audio controls src={'/retrieve?_id=' + song._id} />
                 {props.loggedIn &&
                     <label for='like'>Like: </label> 

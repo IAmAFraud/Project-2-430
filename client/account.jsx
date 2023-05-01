@@ -68,23 +68,6 @@ const handleSong = async (e) => {
     loadSongsFromServer(pageUser, result.loggedIn);
 
     return false;
-
-    /*
-    // Gets the Parameters
-    const name = e.target.querySelector('#domoName').value;
-    const age = e.target.querySelector('#domoAge').value;
-    const job = e.target.querySelector('#domoJob').value;
-
-    // If There is a Missing Parameter
-    if (!name || !age || !job) {
-        helper.handleError('All Fields Are Required!');
-        return false;
-    }
-
-    // Sends the Post
-    helper.sendPost(e.target.action, {name, age, job}, loadDomosFromServer);
-    return false;
-    */
 };
 
 // Song Upload Component
@@ -101,7 +84,7 @@ const SongForm = (props) => {
             <input type='file' name='songFile' />
             <label htmlFor='fileName'>Song Name:</label>
             <input id='fileNameInput' type='text' name='fileName' placeholder='AHHHHHHHHHHHHHHHHHHHH' />
-            <input type='submit' value='Upload Song!' />
+            <input className='uploadSongSubmit' type='submit' value='Upload Song!' />
         </form>
     );
     
@@ -170,7 +153,7 @@ const SongList = (props) => {
     );
 };
 
-// Loads Domos From a Server and Renders a DomoList component
+// Loads Songss From a Server and Renders a SongList component
 const loadSongsFromServer = async (user, _loggedIn) => {
     const response = await fetch(`/retrieveUser${window.location.search}`);
     const data = await response.json();
