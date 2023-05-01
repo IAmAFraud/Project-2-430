@@ -199,8 +199,8 @@ nav:nth-child(1) {
     font-style: italic;
 }
 
-/*
-#message {
+
+#heart {
     z-index: 225;
     margin-top: -20px;
     margin-left: 135px;
@@ -210,7 +210,7 @@ nav:nth-child(1) {
     -webkit-transform: rotate(330deg); 
     transform: rotate(330deg);
 }
-*/
+
 
 #userContent {
     width: 90%;
