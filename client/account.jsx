@@ -96,6 +96,7 @@ const SongList = (props) => {
     if(props.songs.length === 0){
         return (
             <div className='songList'>
+                <h1>User: {window.location.search.split('=')[1]}</h1>
                 <h3 className='emptySong'>No Songs Yet!</h3>
             </div>
         );
@@ -148,6 +149,7 @@ const SongList = (props) => {
     // Calls the Above Function
     return(
         <div className='songList'>
+            <h1>User: {window.location.search.split('=')[1]}</h1>
             {songNodes}
         </div>
     );

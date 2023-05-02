@@ -197,15 +197,6 @@ nav:nth-child(1) {
     font-style: italic;
 }
 
-#userContent {
-    width: 90%;
-    min-width: 400px;
-    border: 2px solid #55acee;
-    border-radius: 4px;
-    margin: 0 auto;
-    margin-top: 100px;
-}
-
 .userList {
     display: flex;
     flex-direction: row;
@@ -239,13 +230,26 @@ nav:nth-child(1) {
     width: 3em;
 }
 
+#userContent {
+    width: 90%;
+    min-width: 400px;
+    margin: 0 auto;
+    margin-top: 50px;
+}
+
+#userContent h1{
+    font-size: 40px;
+    font-weight: bold;
+    margin-left: 3em;
+}
+
 .song {
     display: flex;
     align-items: center;
     width: 75%;
     margin: 0 auto;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     border: 2px solid #f9b734;
     border-radius: 4px;
     background-color: #f9b734;
@@ -274,8 +278,6 @@ nav:nth-child(1) {
 .song a:hover, .user a:hover {
     color: #6b6b6b
 }
-
-
 
 h3.emptySong {
     width: 400px;
