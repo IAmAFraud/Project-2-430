@@ -5,7 +5,7 @@ const generic = require('./genericElements.jsx');
 
 const init = async () => {
     // Checks if Logged In
-    const loginResult = generic.checkLogin();
+    const loginResult = await generic.checkLogin();
     
     let isSubscribed = false;
     if (loginResult.loggedIn) {
