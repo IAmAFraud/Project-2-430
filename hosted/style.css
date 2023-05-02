@@ -14,7 +14,7 @@ html, body {
     border-radius: 8px;
 }
 
-nav {
+nav, nav a{
     width: 100%;
     height: 50px;
     background-color: #55acee;
@@ -24,7 +24,7 @@ nav:nth-child(1) {
     padding-left: 25px;
 }
 
-.navlink {
+.navlink{
     padding: 5px;
     padding-top: 12px;
     padding-left: 20px;
@@ -304,4 +304,63 @@ h3.songOwner {
 .delete:hover {
     transition: background-color 0.4s ease;
     background-color: #338acc;
+}
+
+#header {
+    float: right;
+    padding-right: 40px;
+}
+
+#header h3{
+    margin-top: 15px;
+    text-align: center;
+}
+
+#header ul {
+    position: fixed;
+    bottom: 33em;
+    z-index: 500;
+    border: 2px solid #ccc;
+    list-style-type: none;
+    padding-left: 0px;
+    margin-right: 15px;
+}
+
+#header li {
+    border-bottom: 1px solid #ccc;
+    box-shadow: 2px 1px 1px darkgray;
+    background-color: white;
+    text-align: center;
+    font-size: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#header a {
+    margin: 2px;
+    background-color: white;
+}
+
+#notFoundContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#notFound {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#notFoundHeart {
+    display: block;
+    width: 30em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#returnHomeDiv {
+    text-align: center;
+    padding-bottom: 25px;
 }

@@ -41,7 +41,7 @@ const AccountDropdown = (props) => {
     let actions;
     if (props.loggedIn){
         actions =
-            <ul id='accountActions'>
+            <ul id='accountActions' className='hidden'>
                 <li><a href={'/account?user=' + props.username} id='accountAction'>Account</a></li>
                 <li><a href='/changePass' id='changePassAction'>Change Password</a></li>
                 <li><a href='/logout' id='logoutAction'>Logout</a></li>
@@ -62,7 +62,14 @@ const AccountDropdown = (props) => {
     
     return(
         <div id='accountDropdown'>
-            <h3>AccountActions</h3>
+            <h3 id='accountActionBtn' onClick={() => {
+                const ulItem = document.getElementById('accountActions');
+                if (ulItem.classList.contains('hidden')){
+                    ulItem.classList.remove('hidden');
+                } else {
+                    ulItem.classList.add('hidden');
+                }
+            }}>Account Actions</h3>
             {actions}
         </div>
     );

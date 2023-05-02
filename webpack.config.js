@@ -5,7 +5,8 @@ module.exports = {
         account: './client/account.jsx',
         login: './client/login.jsx',
         homepage: './client/homepage.jsx',
-        generic: './client/genericElements.jsx'
+        generic: './client/genericElements.jsx',
+        notFound: './client/notFound.jsx'
     },
     module: {
         rules: [

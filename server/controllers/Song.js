@@ -9,6 +9,9 @@ const homePage = async (req, res) => res.render('homepage');
 // Renders an account page
 const accountPage = async (req, res) => res.render('account');
 
+// Renders the not found page
+const notFoundPage = async (req, res) => res.render('notFound');
+
 // Get random song(s)
 const getRandomSong = async (req, res) => {
   try {
@@ -187,6 +190,7 @@ const searchSong = async (req, res) => {
 module.exports = {
   homePage,
   accountPage,
+  notFoundPage,
   getRandomSong,
   saveSong,
   deleteSong,
