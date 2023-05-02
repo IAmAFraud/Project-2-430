@@ -49,7 +49,7 @@ const router = (app) => {
 
   // Default Route
   app.get('/', controllers.Song.homePage);
-  app.get('/*', controllers.Song.notFoundPage);
+  app.get('*', controllers.Song.notFoundPage);
 };
 
 // exports
