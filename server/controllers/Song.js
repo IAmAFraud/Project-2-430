@@ -167,8 +167,8 @@ const getSongName = async (req, res) => {
 
 const searchSong = async (req, res) => {
   // Check if params are present
-  if (!req.query.search) {
-    return res.status(400).json({ error: 'Missing Search Parameter' });
+  if (!req.query.search || req.query.search.length === 1) {
+    return res.status(400).json({ error: 'Missing or Invalid Search Parameter (Must be More Than One Character)' });
   }
 
   let docs;

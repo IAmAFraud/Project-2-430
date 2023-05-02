@@ -7,6 +7,11 @@ const ReactDOM = require('react-dom');
 // Displays the result of the search to the page
 const displaySearch = (result, type) => {
     document.getElementById('searchAlert').classList.add('hidden');
+
+    if (result.error) {
+        return helper.handleError(result.error);
+    }
+
     if (type === '/searchSong') {
         const loggedIn = generic.checkLogin();
         ReactDOM.render(

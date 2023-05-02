@@ -9,6 +9,10 @@ const { result } = require('underscore');
 const displaySearch = (result, type) => {
 
     document.getElementById('searchAlert').classList.add('hidden');
+
+    if (result.error) {
+        return helper.handleError(result.error);
+    }
     
     if (type === '/searchSong') {
         ReactDOM.render(
