@@ -55,7 +55,7 @@ const AccountDropdown = (props) => {
             </ul>;
     } else {
         actions =
-            <ul id='accountActions'>
+            <ul id='accountActions' className='hidden'>
                 <li><a href='/login' id='loginAction'>Login/Signup</a></li>
             </ul>;
     }
@@ -90,7 +90,7 @@ const SongList = (props) => {
     const songNodes = props.songs.map(song => {
         return(
             <div key={song._id} className='song'>
-                <h3 className='songName'>Song Name: {song.name}</h3>
+                <h3 className='songName'>{song.name}</h3>
                 <h3 className='songOwner'><a href={'/account?user=' + song.owner}>Artist: {song.owner}</a></h3>
                 <audio controls src={'/retrieve?_id=' + song._id} />
                 {props.loggedIn &&
@@ -130,6 +130,7 @@ const AccountList = (props) => {
     const userNodes = props.users.map(user => {
         return(
             <div key={user._id} className='user'>
+                <img className='accountHeart' src='/assets/img/logo.png' alt='logo' />
                 <h3><a href={'/account?user=' + user.username}>User: {user.username}</a></h3>
             </div>
         );

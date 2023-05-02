@@ -137,7 +137,7 @@ const ChangePassWindow = (props) => {
             <input id='oldPass' type='password' name='oldPass' placeholder='old password' />
             <label htmlFor='newPass'>New Password: </label>
             <input id='newPass' type='password' name='newPass' placeholder='new password' />
-            <input className='formSubmit' type='submit' value='Sign Up' />
+            <input className='formSubmit' type='submit' value='Change Password' />
         </form>
     );
 }

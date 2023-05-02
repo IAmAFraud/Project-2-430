@@ -81,9 +81,9 @@ const SongForm = (props) => {
             className='uploadForm'
             encType='multipart/form-data'
         >
-            <input type='file' name='songFile' />
+            <input id='fileUpload' type='file' name='songFile' />
             <label htmlFor='fileName'>Song Name:</label>
-            <input id='fileNameInput' type='text' name='fileName' placeholder='AHHHHHHHHHHHHHHHHHHHH' />
+            <input id='fileNameInput' type='text' name='fileName' placeholder='Song Name' />
             <input className='uploadSongSubmit' type='submit' value='Upload Song!' />
         </form>
     );
@@ -106,8 +106,8 @@ const SongList = (props) => {
         return(
             <div key={song._id} className='song'>
                 {!song.name ? 
-                    <h3 className='SongName'>Song Has Been Deleted</h3> : 
-                    <h3 className='SongName'>Name: {song.name}</h3>
+                    <h3 className='songName'>Song Has Been Deleted</h3> : 
+                    <h3 className='songName'>Name: {song.name}</h3>
                 }
                 {!song.name ?
                     <audio controls src='' /> :
