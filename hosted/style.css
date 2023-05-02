@@ -337,6 +337,12 @@ h3.songOwner {
     background-color: #c0bfbf;
 }
 
+#searchAlert {
+    font-size: 48px;
+    width: 100%;
+    text-align: center;
+}
+
 #search {
     width: 75%;
     margin-right: auto;

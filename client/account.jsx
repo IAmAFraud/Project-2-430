@@ -7,16 +7,19 @@ const { result } = require('underscore');
 
 // Displays the Search Results on the Webpage
 const displaySearch = (result, type) => {
+
+    document.getElementById('searchAlert').classList.add('hidden');
+    
     if (type === '/searchSong') {
         ReactDOM.render(
             <generic.SongList songs={result.searchResult} />,
-            document.getElementById('userContent')
+            document.getElementById('display')
         );
     }
     else {
         ReactDOM.render(
             <generic.AccountList users={result.searchResult} />,
-            document.getElementById('userContent')
+            document.getElementById('display')
         );
     }
 }
@@ -35,6 +38,8 @@ const searchCallback = async (e) => {
     }
 
     const url = `${type}?search=${search}`;
+
+    document.getElementById('searchAlert').classList.remove('hidden');
     
     const response = await fetch(url, {
         method: 'GET',
@@ -168,7 +173,7 @@ const loadSongsFromServer = async (user, _loggedIn) => {
     }
 
     ReactDOM.render(
-        <SongList songs={data.songs} owner={data.owner} loggedIn={_loggedIn}/>, document.getElementById('userContent')
+        <SongList songs={data.songs} owner={data.owner} loggedIn={_loggedIn}/>, document.getElementById('display')
     );
 
     // Updates the checkboxes
@@ -214,7 +219,7 @@ const loadLikedSongs = async (e) => {
     }
 
     ReactDOM.render(
-        <SongList songs={songInfo} owner='false' loggedIn='true' />, document.getElementById('userContent')
+        <SongList songs={songInfo} owner='false' loggedIn='true' />, document.getElementById('display')
     );
 
     generic.updateLikedCheckbox();
@@ -255,7 +260,7 @@ const init = async () => {
     // Loads in the user's songs
     ReactDOM.render(
         <SongList songs={[]} />,
-        document.getElementById('userContent')
+        document.getElementById('display')
     );
 
     loadSongsFromServer(pageUser, loginResult.loggedIn);

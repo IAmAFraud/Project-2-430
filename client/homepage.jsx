@@ -6,11 +6,12 @@ const ReactDOM = require('react-dom');
 
 // Displays the result of the search to the page
 const displaySearch = (result, type) => {
+    document.getElementById('searchAlert').classList.add('hidden');
     if (type === '/searchSong') {
         const loggedIn = generic.checkLogin();
         ReactDOM.render(
             <generic.SongList songs={result.searchResult} loggedIn={loggedIn.loggedIn} />,
-            document.getElementById('songs')
+            document.getElementById('display')
         );
 
         generic.updateLikedCheckbox();
@@ -18,7 +19,7 @@ const displaySearch = (result, type) => {
     else {
         ReactDOM.render(
             <generic.AccountList users={result.searchResult} />,
-            document.getElementById('songs')
+            document.getElementById('display')
         );
     }
 }
@@ -42,6 +43,8 @@ const searchCallback = async (e) => {
 
     const url = `${type}?search=${search}`;
     
+    document.getElementById('searchAlert').classList.remove('hidden');
+    
     const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -59,7 +62,7 @@ const randomSong = async () => {
     const response = await fetch('/getRandomSongs');
     const docs = await response.json();
     const loginResult = await generic.checkLogin();
-    ReactDOM.render(<generic.SongList songs={docs.songs} loggedIn={loginResult.loggedIn}/>, document.getElementById('songs'));
+    ReactDOM.render(<generic.SongList songs={docs.songs} loggedIn={loginResult.loggedIn}/>, document.getElementById('display'));
 
     // Updates the checkboxes
     generic.updateLikedCheckbox();
@@ -73,7 +76,7 @@ const init = async () => {
     
     ReactDOM.render(
         <generic.SongList songs={[]} loggedIn='false' />,
-        document.getElementById('songs')
+        document.getElementById('display')
     );
 
     randomSong();
