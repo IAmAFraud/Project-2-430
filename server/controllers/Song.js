@@ -10,7 +10,7 @@ const homePage = async (req, res) => res.render('homepage');
 const accountPage = async (req, res) => res.render('account');
 
 // Renders the not found page
-const notFoundPage = async (req, res) => res.render('notFound');
+const notFoundPage = async (req, res) => res.render('notfound');
 
 // Get random song(s)
 const getRandomSong = async (req, res) => {
