@@ -1,9 +1,10 @@
 // Requires
 const multer = require('multer');
 const controllers = require('./controllers');
-
-const upload = multer();
 const mid = require('./middleware');
+
+// Multer object for file upload
+const upload = multer();
 
 // Create the Router Function
 const router = (app) => {

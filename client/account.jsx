@@ -7,20 +7,25 @@ const { result } = require('underscore');
 
 // Displays the Search Results on the Webpage
 const displaySearch = (result, type) => {
-
+    // Hides the search alert element
     document.getElementById('searchAlert').classList.add('hidden');
 
+    // If there is an error, display it
     if (result.error) {
         return helper.handleError(result.error);
     }
     
+    // If searching for a song
     if (type === '/searchSong') {
+        // Renders a generic SongList component using the result
         ReactDOM.render(
             <generic.SongList songs={result.searchResult} />,
             document.getElementById('display')
         );
     }
+    // If searching for an account
     else {
+        // Renders an AccountList component using the result
         ReactDOM.render(
             <generic.AccountList users={result.searchResult} />,
             document.getElementById('display')
@@ -28,11 +33,12 @@ const displaySearch = (result, type) => {
     }
 }
 
-
+// Callback funciton that is called when a user submits a search
 const searchCallback = async (e) => {
     e.preventDefault();
     helper.hideError();
 
+    // Gets the elements of the search bar
     const search = e.target.querySelector('#searchQuery').value;
     const type = e.target.querySelector('#searchSelect').value
     
@@ -41,10 +47,13 @@ const searchCallback = async (e) => {
         helper.handleError('Missing Search Parameter');
     }
 
+    // Defines the search url
     const url = `${type}?search=${search}`;
 
+    // Shows the alert element
     document.getElementById('searchAlert').classList.remove('hidden');
     
+    // Fetches the server for the search results
     const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -52,26 +61,31 @@ const searchCallback = async (e) => {
         },
     });
 
+    // Displays the results
     displaySearch(await response.json(), type);
 }
 
-
+// Callback function to handle uploading a song
 const handleSong = async (e) => {
     // Prevent Default and Hide Error Message
     e.preventDefault();
     helper.hideError();
 
+    // Attempts to upload the song
     const uploadResponse = await fetch('/songUp', {
         method: 'POST',
         body: new FormData(e.target),
-    }); 
+    });
 
+    // Parses the result
     const uploadResult = await uploadResponse.json();
     
+    // If there is an error, display it
     if (uploadResult.error) {
-        helper.handleError(uploadResult.error);
+        return helper.handleError(uploadResult.error);
     }
 
+    // Reloads the songs for the user
     const pageUser = window.location.search.split('=')[1];
     const result = await generic.checkLogin();
     loadSongsFromServer(pageUser, result.loggedIn);
@@ -81,6 +95,8 @@ const handleSong = async (e) => {
 
 // Song Upload Component
 const SongForm = (props) => {
+    // Returns the component for rendering
+    // https://www.w3schools.com/html/html_form_elements.asp
     return(
         <form id='uploadForm'
             onSubmit={handleSong}
@@ -112,7 +128,11 @@ const SongList = (props) => {
     }
 
     // Maps the Songs to a Div
+    // Conditional Rendering: https://legacy.reactjs.org/docs/conditional-rendering.html
     const songNodes = props.songs.map(song => {
+        // Returns the form component
+        // Has lots of variables to determine how elements will be rendered to the page
+        // Checkbox: https://www.w3schools.com/tags/att_input_checked.asp
         return(
             <div key={song._id} className='song'>
                 {!song.name ? 
@@ -155,7 +175,7 @@ const SongList = (props) => {
     });
     
 
-    // Calls the Above Function
+    // Returns the component for rendering
     return(
         <div className='songList'>
             <h1>User: {window.location.search.split('=')[1]}</h1>
@@ -166,16 +186,21 @@ const SongList = (props) => {
 
 // Loads Songss From a Server and Renders a SongList component
 const loadSongsFromServer = async (user, _loggedIn) => {
+    // Fetches the server for a user's songs
     const response = await fetch(`/retrieveUser${window.location.search}`);
     const data = await response.json();
+
+    // If there is a redirect in the response, redirect the page
     if (data.redirect){
         return window.location.href = data.redirect;
     }
 
+    // If there is an error, display it
     if (data.error){
         return helper.handleError(data.error);
     }
 
+    // Renders a SongList component to the view using the result
     ReactDOM.render(
         <SongList songs={data.songs} owner={data.owner} loggedIn={_loggedIn}/>, document.getElementById('display')
     );
@@ -193,6 +218,7 @@ const loadAccountSongs = async (e) => {
     const result = await generic.checkLogin();
     const pageUser = window.location.search.split('=')[1];
 
+    // Loads the user's song to the client
     loadSongsFromServer(pageUser, result.loggedIn);
 };
 
@@ -201,6 +227,7 @@ const loadLikedSongs = async (e) => {
     e.preventDefault();
     helper.hideError();
 
+    // Attempts to load all of the user's liked songs
     const response = await fetch('/likedSongs', {
         method: 'GET',
         headers: {
@@ -209,8 +236,10 @@ const loadLikedSongs = async (e) => {
     });
     const resJson = await response.json();
 
+    // Creates an array of all of the song's info that can be input a SongList component
     const songInfo = [];
     for (let i = 0; i < resJson.ids.likedSongs.length; i++) {
+        // Attempts to fetch the name of the song. If it has been deleted, the view will display an empty audio object
         const nameResponse = await fetch(`/getSongName?id=${resJson.ids.likedSongs[i]}`, {
             method: 'GET',
             headers: {
@@ -222,10 +251,12 @@ const loadLikedSongs = async (e) => {
         songInfo.push({_id: resJson.ids.likedSongs[i], name: nameResJson.songName});
     }
 
+    // Renders a SongList component using the info above
     ReactDOM.render(
         <SongList songs={songInfo} owner='false' loggedIn='true' />, document.getElementById('display')
     );
 
+    // Updates the liked checkboxes on displayed songs
     generic.updateLikedCheckbox();
 }
 
@@ -261,14 +292,16 @@ const init = async () => {
         );
     }
 
-    // Loads in the user's songs
+    // Renders an empty SongList component to the view
     ReactDOM.render(
         <SongList songs={[]} />,
         document.getElementById('display')
     );
 
+    // Loads in the user's songs
     loadSongsFromServer(pageUser, loginResult.loggedIn);
 
+    // Checks if the user is subscribed
     let isSubscribed = false;
     if (loginResult.loggedIn) {
         // Renders the Component to the screen
@@ -282,11 +315,12 @@ const init = async () => {
         isSubscribed = result.subscribed;
     }
     
-
+    // Renders an AccountDropdown to the view
     ReactDOM.render(
         <generic.AccountDropdown loggedIn={loginResult.loggedIn} username={loginResult.username} subscribed={isSubscribed}/>,
         document.getElementById('header')
     );
 };
 
+// Runs the init function on load
 window.onload = init;

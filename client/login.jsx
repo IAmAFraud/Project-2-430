@@ -80,6 +80,7 @@ const handleChangePassword = (e, username) => {
 
 // Login Component
 const LoginWindow = (props) => {
+    // Returns the form to be rendered
     return (
         <form id='loginForm'
             name='loginForm'
@@ -99,6 +100,7 @@ const LoginWindow = (props) => {
 
 // SignUp Component
 const SignupWindow = (props) => {
+    // Returns the form to be rendered
     return (
         <form id='signupForm'
             name='signupForm'
@@ -120,11 +122,13 @@ const SignupWindow = (props) => {
 
 // Change Password Component
 const ChangePassWindow = (props) => {
+    // Funciton to pass of password change to a callback function
     const handlePassChange = (e) => {
         const username = props.username;
         handleChangePassword(e, username);
     }
     
+    // Renders the form to be rendered
     return (
         <form id='changePassForm'
             name='changePassForm'
@@ -146,10 +150,11 @@ const ChangePassWindow = (props) => {
 const init = async () => {
     // Checks if the user is logged in
     const loginResult = await generic.checkLogin();
+    
+    // Checks if the logged in user is subscribed
     let isSubscribed = false;
 
     if (loginResult.loggedIn) {
-        // Renders the Component to the screen
         const response = await fetch('/checkPremium', {
             method: 'GET',
             headers: {
@@ -160,8 +165,7 @@ const init = async () => {
         isSubscribed = result.subscribed;
     }
 
-    
-
+    // Renders the account dropdown component to the screen
     ReactDOM.render(
         <generic.AccountDropdown loggedIn={loginResult.loggedIn} username={loginResult.username} subscribed={isSubscribed} />,
         document.getElementById('header')
@@ -171,19 +175,19 @@ const init = async () => {
     const loginButton = document.getElementById('loginButton');
     const signupButton = document.getElementById('signupButton');
 
+    // If the user is logged in
     if(loginResult.loggedIn){
         // Hides Unused Buttons
         loginButton.classList.add('hidden');
         signupButton.classList.add('hidden');
 
+        // Renders the ChangePassWindow component to the view
         ReactDOM.render(<ChangePassWindow username={loginResult.username} />, document.getElementById('content'));
     } else {
-        console.log(loginButton);
-        console.log(signupButton);
-
         // Login Button Event
         loginButton.addEventListener('click', (e) => {
             e.preventDefault();
+            // Renders the LoginWindow component to the screen
             ReactDOM.render(<LoginWindow />, document.getElementById('content'));
             return false;
         });
@@ -191,13 +195,15 @@ const init = async () => {
         // Signup Button Event
         signupButton.addEventListener('click', (e) => {
             e.preventDefault();
+            // Renders the SignupWindow to the screen
             ReactDOM.render(<SignupWindow />, document.getElementById('content'));
             return false;
         });
 
+        // Renders the LoginWindow component to the screen
         ReactDOM.render(<LoginWindow />, document.getElementById('content'));
     }
 };
 
-
+// Runs init when the window loads
 window.onload = init;

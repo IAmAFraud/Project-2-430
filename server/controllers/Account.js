@@ -36,6 +36,7 @@ const login = (req, res) => {
   });
 };
 
+// Creates an account for a new user
 const signup = async (req, res) => {
   // Sets the Variables
   const username = `${req.body.username}`;
@@ -77,6 +78,7 @@ const changePassword = (req, res) => {
   const { newPass } = req.body;
   const { username } = req.body;
 
+  // If there is a variable missing, return a 400 error
   if (!oldPass || !newPass) {
     return res.status(400).json({ error: 'Missing Old or New Password' });
   }
@@ -87,7 +89,7 @@ const changePassword = (req, res) => {
       return res.status(401).json({ error: 'Wrong password!' });
     }
 
-    // Tries to Create a New User
+    // Tries to Update the user's password
     try {
       const hash = await Account.generateHash(newPass);
       const tempAccount = account;
@@ -129,9 +131,14 @@ const searchAccount = async (req, res) => {
   let docs;
 
   // Creates the regex param
+  // https://stackoverflow.com/questions/4029109/javascript-regex-how-to-put-a-variable-inside-a-regular-expression
+  // https://javascript.info/regexp-introduction#:~:text=A%20regular%20expression%20consists%20of,otherwise%2C%20only%20the%20first%20one.
   const regexExpression = new RegExp(req.query.search, 'gi');
 
+  // Tries to find all examples of user's whose username match the search param
   try {
+    // https://stackoverflow.com/questions/32898139/partial-string-matching-in-mongodb
+    // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
     const query = { username: { $regex: regexExpression } };
     docs = await Account.find(query);
     return res.json({ searchResult: docs });
@@ -143,16 +150,19 @@ const searchAccount = async (req, res) => {
 
 // Checks if a user has liked a song
 const checkLiked = async (req, res) => {
+  // If the id is missing, return a 400 error
   if (!req.query.id) {
     return res.status(400).json({ error: 'Missing Song Id' });
   }
 
   let doc;
 
+  // Tries to find if a user has liked a song or not
   try {
     // Looks for the liked song
     const query = { username: req.session.account.username };
     doc = await Account.findOne(query);
+    // https://stackoverflow.com/questions/25768213/mongodb-in-with-an-objectid-array
     const id = new ObjectId(req.query.id);
     const song = doc.likedSongs.indexOf(id);
 
@@ -174,20 +184,24 @@ const checkLiked = async (req, res) => {
 
 // Updates what songs a user has liked
 const updateLiked = async (req, res) => {
+  // If the id or checked status is missing, return a 400 error
   if (!req.body.id || req.body.checked === null) {
-    console.log(req.body.checked);
     return res.status(400).json({ error: 'Missing Song ID or Checked Status' });
   }
 
+  // Tries to find the song the user liked and either add it or remove it from their likedSongs list
   const query = { username: req.session.account.username };
 
   try {
     const userAccount = await Account.findOne(query);
+    // If checked, add it to the array
     if (req.body.checked) {
       userAccount.likedSongs.push(req.body.id);
       await userAccount.save();
       return res.json({ message: 'Successfully Added Liked Song' });
     }
+    // if unchecked, remove it from the array
+    // https://stackoverflow.com/questions/25768213/mongodb-in-with-an-objectid-array
     const id = new ObjectId(req.body.id);
     const index = userAccount.likedSongs.indexOf(id);
     userAccount.likedSongs.splice(index, 1);
@@ -201,6 +215,7 @@ const updateLiked = async (req, res) => {
 
 // Returns all of the songs liked by a user
 const getLikedSongs = async (req, res) => {
+  // Tries to get all the liked songs of the user
   const query = { username: req.session.account.username };
   let doc;
 
@@ -215,10 +230,12 @@ const getLikedSongs = async (req, res) => {
 
 // Updates whether an account has a premium subscription
 const updatePremium = async (req, res) => {
+  // If the subscribed param is missing, return a 400 error
   if (req.body.subscribed === null) {
     return res.status(400).json({ error: 'Missing Subscribed Parameter' });
   }
 
+  // Tries to update a user's premium status in the database
   const query = { username: req.session.account.username };
   let doc;
 
@@ -235,6 +252,7 @@ const updatePremium = async (req, res) => {
 
 // Checks if the user has a premium subscription
 const checkPremium = async (req, res) => {
+  // Tries to check if the user is a premium subscriber
   const query = { username: req.session.account.username };
   let doc;
 

@@ -5,6 +5,8 @@ const ReactDOM = require('react-dom');
 
 // Search Bar Component
 const SearchBar = (props) => {    
+    // Returns the Component
+    // https://www.w3schools.com/html/html_form_elements.asp
     return(
         <form id='searchForm'
             onSubmit={props.callback}
@@ -38,6 +40,7 @@ const AccountDropdown = (props) => {
     };
 
     // Creates the List Elements depending if logged in or not
+    // Conditional Rendering: https://legacy.reactjs.org/docs/conditional-rendering.html
     let actions;
     if (props.loggedIn){
         actions =
@@ -48,6 +51,7 @@ const AccountDropdown = (props) => {
                 <li>
                     <label for='premiumSub'>Premium Subscription: </label>
                     {props.subscribed ?
+                        // Checkboxes: https://www.w3schools.com/tags/att_input_checked.asp
                         <input id='premiumSub' type='checkbox' onChange={updatePremium} checked/> :
                         <input id='premiumSub' type='checkbox' onChange={updatePremium}/>
                     }
@@ -60,6 +64,7 @@ const AccountDropdown = (props) => {
             </ul>;
     }
     
+    // Returns the component to be rendered
     return(
         <div id='accountDropdown'>
             <h3 id='accountActionBtn' onClick={() => {
@@ -87,7 +92,9 @@ const SongList = (props) => {
     }
 
     // Maps the song to elements
+    // Conditional Rendering: https://legacy.reactjs.org/docs/conditional-rendering.html
     const songNodes = props.songs.map(song => {
+        // Checkbox: https://www.w3schools.com/tags/att_input_checked.asp
         return(
             <div key={song._id} className='song'>
                 <h3 className='songName'>{song.name}</h3>
@@ -107,7 +114,7 @@ const SongList = (props) => {
         );
     });
 
-    // Calls songNodes
+    // Returns the component to be rendered
     return(
         <div className='songList'>
             {songNodes}
@@ -136,7 +143,7 @@ const AccountList = (props) => {
         );
     });
 
-    // Calls songNodes
+    // Returns the component to be rendered
     return(
         <div className='userList'>
             {userNodes}
@@ -164,6 +171,7 @@ const songLiked = async (id) => {
 };
 
 // Updates a liked checkbox
+// https://www.w3schools.com/jsref/prop_checkbox_checked.asp
 const updateLikedCheckbox = async () =>{
     const likedCheckboxes = document.getElementsByClassName('liked');
     if (likedCheckboxes){

@@ -33,6 +33,8 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  // https://mongoosejs.com/docs/schematypes.html#objectids
+  // https://stackoverflow.com/questions/22244421/how-to-create-mongoose-schema-with-array-of-object-ids
   likedSongs: {
     type: [mongoose.ObjectId],
     required: true,
@@ -84,5 +86,8 @@ AccountSchema.statics.authenticate = async (username, password, callback) => {
   }
 };
 
+// Makes an Account model from the schema
 AccountModel = mongoose.model('Account', AccountSchema);
+
+// Exports
 module.exports = AccountModel;

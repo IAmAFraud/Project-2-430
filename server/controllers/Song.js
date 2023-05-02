@@ -15,6 +15,8 @@ const notFoundPage = async (req, res) => res.render('notfound');
 // Get random song(s)
 const getRandomSong = async (req, res) => {
   try {
+    // https://mongoosejs.com/docs/api/aggregate.html#Aggregate.prototype.search(),
+    // https://www.statology.org/mongodb-random-sample/
     const docs = await Song.aggregate([{ $sample: { size: 5 } }]);
 
     return res.json({ songs: docs });
@@ -24,6 +26,7 @@ const getRandomSong = async (req, res) => {
   }
 };
 
+// Saves an uploaded song to the database
 const saveSong = async (req, res) => {
   // Checks if a file was provided
   if (!req.file || !req.body.fileName) {
@@ -57,6 +60,7 @@ const saveSong = async (req, res) => {
     owner: req.session.account.username,
   };
 
+  // Tries to save the song
   try {
     const newSong = new Song(songData);
     await newSong.save();
@@ -71,10 +75,12 @@ const saveSong = async (req, res) => {
 
 // Function to delete a song
 const deleteSong = async (req, res) => {
+  // Checks if the id is present
   if (!req.body.id) {
     return res.status(400).json({ error: 'Missing ID to Delete' });
   }
 
+  // Tries to delete the song from the database
   try {
     const query = { _id: req.body.id };
     const doc = await Song.findOneAndDelete(query).select('name').lean().exec();
@@ -87,11 +93,13 @@ const deleteSong = async (req, res) => {
 
 // Function to get all the ids of a user's songs
 const retrieveUserSongs = async (req, res) => {
+  // If missing a parameter, returns a 400 status
   if (!req.query.user && req.session.account) {
     return res.json({ redirect: `/account?user=${req.session.account.username}` });
   }
-  const { user } = req.query;
 
+  // Determines if the user is the owner of the songs
+  const { user } = req.query;
   if (!user) {
     return res.status(400).json({ error: 'No User Provided' });
   }
@@ -101,6 +109,7 @@ const retrieveUserSongs = async (req, res) => {
     owner = true;
   }
 
+  // Tries to get the songs uploaded by a user from the database
   try {
     const query = { owner: user };
     const docs = await Song.find(query).select('_id name').exec();
@@ -114,10 +123,12 @@ const retrieveUserSongs = async (req, res) => {
 
 // Load Song Function
 const retrieveSong = async (req, res) => {
+  // If an id wasn't provided, don't load the song
   if (!req.query._id) {
     return res.status(400).json({ error: 'ID Not Provided' });
   }
 
+  // Tries to get a song from the database from the id
   let doc;
 
   try {
@@ -128,10 +139,12 @@ const retrieveSong = async (req, res) => {
     return res.status(500).json({ error: 'Error Retrieving File!' });
   }
 
+  // If the file isn't found, return a 404
   if (!doc) {
     return res.status(404).json({ error: 'File Not Found!' });
   }
 
+  // Sends the file back to the client
   res.set({
     'Content-Type': 'audio/mpeg',
     'Content-Length': doc.size,
@@ -143,10 +156,12 @@ const retrieveSong = async (req, res) => {
 
 // Gets the name of a song based on an id
 const getSongName = async (req, res) => {
+  // If missing an id, return a 400 status
   if (!req.query.id) {
     return res.status(400).json({ error: 'Missing Id!' });
   }
 
+  // Tries to find a song and return it's name
   const query = { _id: req.query.id };
   let doc;
 
@@ -165,6 +180,7 @@ const getSongName = async (req, res) => {
   }
 };
 
+// Searches for all the songs that match a given search param
 const searchSong = async (req, res) => {
   // Check if params are present
   if (!req.query.search || req.query.search.length === 1) {
@@ -174,9 +190,14 @@ const searchSong = async (req, res) => {
   let docs;
 
   // Creates the regex param
+  // https://stackoverflow.com/questions/4029109/javascript-regex-how-to-put-a-variable-inside-a-regular-expression
+  // https://javascript.info/regexp-introduction#:~:text=A%20regular%20expression%20consists%20of,otherwise%2C%20only%20the%20first%20one.
   const regexExpression = new RegExp(req.query.search, 'gi');
 
+  // Tries to search for all songs that match the search param
   try {
+    // https://stackoverflow.com/questions/32898139/partial-string-matching-in-mongodb
+    // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
     const query = { name: { $regex: regexExpression } };
     docs = await Song.find(query);
     return res.json({ searchResult: docs });
