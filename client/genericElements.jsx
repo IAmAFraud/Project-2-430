@@ -46,7 +46,7 @@ const AccountDropdown = (props) => {
                 <li><a href='/changePass' id='changePassAction'>Change Password</a></li>
                 <li><a href='/logout' id='logoutAction'>Logout</a></li>
                 <li>
-                    <label for='premium'>Premium Subscription: </label>
+                    <label for='premiumSub'>Premium Subscription: </label>
                     {props.subscribed ?
                         <input id='premiumSub' type='checkbox' onChange={updatePremium} checked/> :
                         <input id='premiumSub' type='checkbox' onChange={updatePremium}/>

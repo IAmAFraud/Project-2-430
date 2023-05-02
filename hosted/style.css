@@ -366,16 +366,29 @@ h3.songOwner {
     margin-left: 15%;
 }
 
-#header {
+#accountActionBtn {
+    font-family: 'Open Sans';
     float: right;
+    cursor: pointer;
+    margin-top: 12px;
     padding-right: 40px;
-}
-
-#header h3{
-    margin-top: 10px;
     margin-right: 2em;
+    margin-bottom: 10px;
     text-align: center;
     color: white;
+}
+
+#accountActionBtn:link, #accountActionBtn:visited, #accountActionBtn:hover, #accountActionBtn:active {
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    background-color: #717171;
+    transition: background-color 0.4s ease;
+}
+
+#accountActionBtn:hover {
+    transition: background-color 0.8s ease;
+    background-color: #b1b1b1;
 }
 
 /*https://www.w3schools.com/css/css_positioning.asp*/
